@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
 import wannacode.composeapp.generated.resources.cross

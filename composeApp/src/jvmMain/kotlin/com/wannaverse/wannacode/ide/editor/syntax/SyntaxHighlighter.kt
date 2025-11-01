@@ -1,17 +1,16 @@
 package com.wannaverse.wannacode.ide.editor.syntax
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import com.wannaverse.wannacode.ERROR_RED
-import com.wannaverse.wannacode.ide.editor.CodeEditorViewModel
+import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
+import com.wannaverse.wannacode.ide.editor.viewmodel.DiagnosticLineInfo
 
 fun highlightCode(
     code: String,
     language: String = "java",
-    diagnostics: List<CodeEditorViewModel.DiagnosticLineInfo> = emptyList()
+    diagnostics: List<DiagnosticLineInfo> = emptyList()
 ): AnnotatedString {
     val builder = AnnotatedString.Builder()
     val syntax = syntaxMap[language] ?: return AnnotatedString(code)

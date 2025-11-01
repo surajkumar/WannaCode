@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wannaverse.wannacode.ERROR_RED
 import com.wannaverse.wannacode.ide.editor.syntax.highlightCode
+import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
+import com.wannaverse.wannacode.ide.editor.viewmodel.TabContent
 import kotlin.math.min
 
 @Composable

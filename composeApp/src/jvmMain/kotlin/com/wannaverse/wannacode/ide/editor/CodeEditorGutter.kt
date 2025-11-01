@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
+import com.wannaverse.wannacode.ide.editor.viewmodel.TabContent
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

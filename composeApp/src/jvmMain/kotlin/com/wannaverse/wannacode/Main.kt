@@ -20,9 +20,11 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.wannaverse.wannacode.ide.IDEScreen
 import com.wannaverse.wannacode.splash.SplashPage
 import com.wannaverse.wannacode.splash.SplashPageViewModel
 import java.awt.GraphicsEnvironment
+import java.io.File
 import kotlinx.coroutines.launch
 
 val theme = darkColorScheme(
@@ -47,7 +49,7 @@ val theme = darkColorScheme(
 )
 
 fun main() = application {
-    var showSplash by remember { mutableStateOf(true) }
+    var showSplash by remember { mutableStateOf(false) }
 
     MaterialTheme(
         colorScheme = theme
@@ -115,7 +117,8 @@ fun main() = application {
                 Scaffold(
                     containerColor = MaterialTheme.colorScheme.background
                 ) {
-                    // TODO: This is where we will start the primary IDE interface
+                    // IDEScreen(viewModel.getDir())
+                    IDEScreen(File("C:\\Users\\user\\WannaCodeProjects\\untitled1"))
                 }
             }
         }
