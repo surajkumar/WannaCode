@@ -1,4 +1,4 @@
-package com.wannaverse.wannacode.ide.editor
+package com.wannaverse.wannacode.ide.editor.viewmodel
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -16,55 +16,42 @@ import com.wannaverse.wannacode.ide.editor.jdt.getDiagnostics
 import com.wannaverse.wannacode.ide.editor.jdt.launchJdtServer
 import com.wannaverse.wannacode.ide.editor.jdt.quickFixes
 import java.io.File
+import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import java.nio.charset.CodingErrorAction
-import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardWatchEventKinds
 import kotlin.collections.mutableListOf
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
-import org.eclipse.lsp4j.Command
 import org.eclipse.lsp4j.WorkspaceEdit
-
-data class TabContent(
-    val id: Int,
-    val file: File,
-    val text: String,
-    val isDirty: Boolean = false,
-    val readOnly: Boolean = false
-)
 
 class CodeEditorViewModel : ViewModel() {
     private var nextId = 0
         get() = field++
-
     private val activeTabTitles = mutableStateListOf<String>()
     private val _tabContents = mutableStateMapOf<Int, TabContent>()
     val tabContents: Map<Int, TabContent> = _tabContents
     val currentTab = mutableStateOf(-1)
-
     val projectName = mutableStateOf("")
     val directory = mutableStateOf(File(""))
-
     private val tabDiagnostics = mutableStateMapOf<Int, MutableState<List<DiagnosticLineInfo>>>()
     val diagnosticLineInfoList: State<List<DiagnosticLineInfo>>
         get() = tabDiagnostics.getOrPut(currentTab.value) { mutableStateOf(emptyList()) }
-
-    // Per-tab logs
+    var refreshKey by mutableStateOf(0)
+        private set
     private val tabLogs = mutableStateMapOf<Int, MutableState<List<String>>>()
+    private val tabTexts = mutableStateMapOf<Int, MutableStateFlow<String>>()
+    private var saveJob: Job? = null
+    private val gson = Gson()
 
     fun addLog(msg: String, tabId: Int = currentTab.value) {
         val state = tabLogs.getOrPut(tabId) { mutableStateOf(emptyList()) }
-        state.value += msg // trigger recomposition
+        state.value += msg
     }
 
     fun clearLogs(tabId: Int = currentTab.value) {
@@ -72,8 +59,6 @@ class CodeEditorViewModel : ViewModel() {
     }
 
     fun getLogs(tabId: Int = currentTab.value): State<List<String>> = tabLogs.getOrPut(tabId) { mutableStateOf(emptyList()) }
-    var refreshKey by mutableStateOf(0)
-        private set
 
     fun refreshTree() {
         refreshKey++
@@ -93,71 +78,30 @@ class CodeEditorViewModel : ViewModel() {
         )
     }
 
-    data class DiagnosticLineInfo(
-        val diagnosticLine: Int,
-        val startChar: Int, // column where the error starts
-        val endChar: Int, // column where the error ends
-        val message: String,
-        val fixes: List<FixArgument>
-    )
-
-    @Serializable
-    data class FixArgument(
-        val changes: Map<String, List<Change>>
-    )
-
-    @Serializable
-    data class Change(
-        val range: Range,
-        val newText: String,
-        var title: String? = null,
-        var command: Command? = null
-    )
-
-    @Serializable
-    data class Range(
-        val start: Position,
-        val end: Position
-    )
-
-    @Serializable
-    data class Position(
-        val line: Int,
-        val character: Int
-    )
-
-    val gson = Gson()
-
     fun applyFix(change: Change) {
         val tabId = currentTab.value
         val tab = _tabContents[tabId] ?: return
         var newText = tab.text
 
-        // Apply direct text edits if present
-        change.range?.let { range ->
+        change.range.let { range ->
             val lines = newText.lines().toMutableList()
             val startLine = range.start.line
             val startChar = range.start.character
             val endLine = range.end.line
             val endChar = range.end.character
-
             val before = lines[startLine].substring(0, startChar)
             val after = lines[endLine].substring(endChar)
-
             val newLines = change.newText.split("\n")
 
             lines.subList(startLine, endLine + 1).clear()
             lines.addAll(startLine, newLines)
             lines[startLine] = before + lines[startLine]
             lines[startLine + newLines.size - 1] += after
-
             newText = lines.joinToString("\n")
         }
 
-        // Update the editor tab
         updateCurrentTabText(newText)
 
-        // If a Command is attached, apply it (e.g., java.apply.workspaceEdit)
         change.command?.let { command ->
             if (command.command == "java.apply.workspaceEdit") {
                 // Parse the workspace edit from command arguments
@@ -171,7 +115,6 @@ class CodeEditorViewModel : ViewModel() {
         }
     }
 
-    // Utility to apply a WorkspaceEdit
     fun applyWorkspaceEdit(edit: WorkspaceEdit) {
         edit.changes?.forEach { (uri, textEdits) ->
             val filePath = uri.removePrefix("file://").replace("/", File.separator)
@@ -185,16 +128,14 @@ class CodeEditorViewModel : ViewModel() {
                 val startChar = te.range.start.character
                 val endLine = te.range.end.line
                 val endChar = te.range.end.character
-
                 val before = lines[startLine].substring(0, startChar)
                 val after = lines[endLine].substring(endChar)
-
                 val newLines = te.newText.split("\n")
+
                 lines.subList(startLine, endLine + 1).clear()
                 lines.addAll(startLine, newLines)
                 lines[startLine] = before + lines[startLine]
                 lines[startLine + newLines.size - 1] += after
-
                 code = lines.joinToString("\n")
             }
             file.writeText(code)
@@ -298,7 +239,6 @@ class CodeEditorViewModel : ViewModel() {
                         readOnly = file.toPath().isLikelyBinary()
                     )
 
-                    // Initialize per-tab logs and diagnostics
                     tabLogs[tabId] = mutableStateOf(emptyList())
                     tabDiagnostics[tabId] = mutableStateOf(emptyList())
 
@@ -314,7 +254,6 @@ class CodeEditorViewModel : ViewModel() {
         charset: Charset = Charsets.UTF_8,
         replacement: Char = '�'
     ): String {
-        // Fast check: if file has null bytes or too many control chars → binary
         if (isLikelyBinary()) {
             return "<binary file - cannot display as text>"
         }
@@ -325,7 +264,7 @@ class CodeEditorViewModel : ViewModel() {
             .onUnmappableCharacter(CodingErrorAction.REPLACE)
             .replaceWith(replacement.toString())
 
-        return decoder.decode(java.nio.ByteBuffer.wrap(bytes)).toString()
+        return decoder.decode(ByteBuffer.wrap(bytes)).toString()
     }
 
     fun Path.isLikelyBinary(previewSize: Long = 1024): Boolean {
@@ -352,8 +291,6 @@ class CodeEditorViewModel : ViewModel() {
         }
     }
 
-    private val tabTexts = mutableStateMapOf<Int, MutableStateFlow<String>>()
-
     fun updateCurrentTabText(newText: String) {
         val id = currentTab.value
         val tab = _tabContents[id] ?: return
@@ -361,8 +298,6 @@ class CodeEditorViewModel : ViewModel() {
         tabTexts[id]?.value = newText
         debounceSave(tab.file, newText)
     }
-
-    private var saveJob: Job? = null
 
     private fun debounceSave(file: File, text: String) {
         saveJob?.cancel()

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wannaverse.wannacode.common.Scrollbar
 import com.wannaverse.wannacode.ide.editor.panel.InfoPanel
+import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

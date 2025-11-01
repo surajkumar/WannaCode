@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.wannaverse.wannacode.STROKE_COLOR
 import com.wannaverse.wannacode.common.Dropdown
 import com.wannaverse.wannacode.common.PlainDropdown
-import com.wannaverse.wannacode.ide.editor.CodeEditorViewModel
+import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
 import wannacode.composeapp.generated.resources.close_cross

@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.wannaverse.wannacode.SCROLL_BAR_IDLE_ACTIVE
 import com.wannaverse.wannacode.SCROLL_BAR_IDLE_COLOR
 import com.wannaverse.wannacode.STROKE_COLOR
-import com.wannaverse.wannacode.ide.editor.CodeEditorViewModel
+import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import com.wannaverse.wannacode.ide.explorer.components.FileTreeView
 import java.awt.Cursor
 import java.io.File

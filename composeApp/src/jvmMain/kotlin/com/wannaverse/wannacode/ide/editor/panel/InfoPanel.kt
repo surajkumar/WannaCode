@@ -3,12 +3,7 @@ package com.wannaverse.wannacode.ide.editor.panel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
@@ -20,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.wannaverse.wannacode.ERROR_RED
 import com.wannaverse.wannacode.common.Scrollbar
-import com.wannaverse.wannacode.ide.editor.CodeEditorViewModel
+import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 
 @Composable
 fun InfoPanel(

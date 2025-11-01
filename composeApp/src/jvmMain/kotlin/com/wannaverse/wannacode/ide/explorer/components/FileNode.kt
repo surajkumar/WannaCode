@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wannaverse.wannacode.common.FileContextMenu
-import com.wannaverse.wannacode.ide.editor.CodeEditorViewModel
+import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import java.io.File
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res

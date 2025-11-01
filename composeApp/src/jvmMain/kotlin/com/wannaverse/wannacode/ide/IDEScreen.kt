@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.wannaverse.wannacode.ide.editor.CodeEditor
 import com.wannaverse.wannacode.ide.editor.CodeEditorTabs
-import com.wannaverse.wannacode.ide.editor.CodeEditorViewModel
+import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import com.wannaverse.wannacode.ide.explorer.FileExplorer
 import com.wannaverse.wannacode.ide.terminal.Terminal
 import java.io.File
