@@ -49,7 +49,7 @@ val theme = darkColorScheme(
 )
 
 fun main() = application {
-    var showSplash by remember { mutableStateOf(false) }
+    var showSplash by remember { mutableStateOf(true) }
 
     MaterialTheme(
         colorScheme = theme
@@ -117,8 +117,7 @@ fun main() = application {
                 Scaffold(
                     containerColor = MaterialTheme.colorScheme.background
                 ) {
-                    // IDEScreen(viewModel.getDir())
-                    IDEScreen(File("C:\\Users\\user\\WannaCodeProjects\\untitled1"))
+                    IDEScreen(viewModel.getDir())
                 }
             }
         }
