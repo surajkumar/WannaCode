@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -15,11 +19,26 @@ import androidx.compose.ui.unit.dp
 import com.wannaverse.wannacode.ACTIVE_TEXT_COLOR
 import com.wannaverse.wannacode.PRIMARY_TEXT_COLOR
 import com.wannaverse.wannacode.STROKE_COLOR
+import com.wannaverse.wannacode.common.FolderSelector
 import com.wannaverse.wannacode.splash.SplashPageOption
 import com.wannaverse.wannacode.splash.SplashPageViewModel
 
 @Composable
 fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
+    var showOpenProject by remember { mutableStateOf(false) }
+
+    if (showOpenProject) {
+        FolderSelector(
+            onFolderSelected = { folder ->
+                viewModel.location.value = folder.parent
+                viewModel.projectName.value = folder.name
+                viewModel.showIDE.value = true
+                showOpenProject = false
+                hideSplash()
+            }
+        )
+    }
+
     Column {
         Row(
             modifier = Modifier.padding(start = 10.dp),
@@ -61,7 +80,7 @@ fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
                     text = "Open",
                     color = if (viewModel.activeScreen == SplashPageOption.OPEN) ACTIVE_TEXT_COLOR else PRIMARY_TEXT_COLOR,
                     modifier = Modifier.clickable(onClick = {
-                        viewModel.activeScreen = SplashPageOption.OPEN
+                        showOpenProject = true
                     })
                 )
 
