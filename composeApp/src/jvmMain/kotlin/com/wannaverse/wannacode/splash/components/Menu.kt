@@ -35,7 +35,8 @@ fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
                 viewModel.showIDE.value = true
                 showOpenProject = false
                 hideSplash()
-            }
+            },
+            onCancel = { showOpenProject = false }
         )
     }
 

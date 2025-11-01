@@ -40,10 +40,13 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
 
     var showFolderDialog by remember { mutableStateOf(false) }
     if (showFolderDialog) {
-        FolderSelector { folder ->
-            viewModel.buildToolInstallationPath.value = folder.absolutePath
-            showFolderDialog = false
-        }
+        FolderSelector(
+            onFolderSelected = {
+                viewModel.buildToolInstallationPath.value = it.absolutePath
+                showFolderDialog = false
+            },
+            onCancel = { showFolderDialog = false }
+        )
     }
 
     Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {

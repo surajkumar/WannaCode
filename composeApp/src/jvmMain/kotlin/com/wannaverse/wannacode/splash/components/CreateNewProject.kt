@@ -42,10 +42,13 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
     var showFolderDialog by remember { mutableStateOf(false) }
 
     if (showFolderDialog) {
-        FolderSelector { folder ->
-            viewModel.location.value = folder.absolutePath
-            showFolderDialog = false
-        }
+        FolderSelector(
+            onFolderSelected = {
+                viewModel.location.value = it.absolutePath
+                showFolderDialog = false
+            },
+            onCancel = { showFolderDialog = false }
+        )
     }
 
     var isError by remember { mutableStateOf(false) }
