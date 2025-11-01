@@ -26,7 +26,7 @@ class JavaClient : LanguageClient {
 
     override fun logMessage(message: MessageParams?) {
         if (message?.type == MessageType.Error) {
-            message.message?.contains("Document does not match the AST")?.let {
+            if (message.message?.contains("Document does not match the AST") == true) {
                 println("JDT server restarting")
                 restartJdtServer()
             }
