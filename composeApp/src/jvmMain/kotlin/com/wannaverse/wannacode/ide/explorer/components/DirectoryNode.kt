@@ -96,7 +96,7 @@ fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, c
                 Icon(
                     painter = painterResource(Res.drawable.folder),
                     contentDescription = null,
-                    tint = Color(0xFFB4A06A),
+                    tint = Color.DarkGray,
                     modifier = Modifier.size(24.dp)
                 )
 
