@@ -8,4 +8,4 @@ An ultra light IDE for Java programming.
 ## Screenshot
 <img width="1190" height="994" alt="image" src="https://github.com/user-attachments/assets/6cb9abbf-90d7-4d14-a8c1-167faa340245" />
 
-<img width="2558" height="1387" alt="image" src="https://github.com/user-attachments/assets/db0af8ed-ad15-40a4-817b-bb5f1ff35127" />
+<img width="2556" height="1390" alt="image" src="https://github.com/user-attachments/assets/f5acf16a-7375-4969-a78c-a6a0c2a142d6" />
