@@ -5,6 +5,10 @@ composeMultiplatform = "1.9.1"
 junit = "4.13.2"
 kotlin = "2.2.20"
 kotlinx-coroutines = "1.10.2"
+json = "20210307"
+
+# Plugins
+spotless = "8.0.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -14,8 +18,12 @@ androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecyc
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 
+json = { module = "org.json:json", version.ref = "json"}
+
 [plugins]
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
