@@ -1,0 +1,512 @@
+{
+  "kotlin": {
+    "rules": [
+      {
+        "pattern": "\\b(package|import|private|protected|public|internal|class|interface|object|fun|val|var|typealias|constructor|by|companion|init|this|super|where|field|param|setparam|getparam|receiver|set|delegate|file|data|inner|sealed|annotation|enum|open|override|abstract|final|dynamic)\\b",
+        "style": { "color": "#FF9500", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?[fFdD]?\\b",
+        "style": { "color": "#3C12F9" }
+      },
+      {
+        "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#00FF00" }
+      },
+      {
+        "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b[A-Z][a-zA-Z0-9]*\\b",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold", "textDecoration": "underline" }
+      }
+    ]
+  },
+
+  "java": {
+    "rules": [
+      {
+        "pattern": "\\b(abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|false|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|null|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|true|try|void|volatile|while)\\b",
+        "style": { "color": "#FF9500", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?[fFdD]?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "(\"([^\"\\\\]|\\\\.)*\")|('([^'\\\\]|\\\\.)*')",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "'(\\\\?.)'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "@\\w+",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b[A-Z][a-zA-Z0-9]*\\b",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold", "textDecoration": "underline" }
+      }
+    ]
+  },
+
+  "javascript": {
+    "rules": [
+      {
+        "pattern": "\\b(break|case|catch|class|const|continue|debugger|default|delete|do|else|export|extends|finally|for|function|if|import|in|instanceof|new|return|super|switch|this|throw|try|typeof|var|void|while|with|yield|await|async)\\b",
+        "style": { "color": "#F7DF1E", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b(true|false|null|undefined|NaN|Infinity)\\b",
+        "style": { "color": "#7EC3EB" }
+      },
+      {
+        "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "`[^`]*`",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b([A-Z][a-zA-Z0-9]*)\\b",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "typescript": {
+    "rules": [
+      {
+        "pattern": "\\b(abstract|as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|from|function|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|true|try|type|typeof|var|void|while|with|yield)\\b",
+        "style": { "color": "#2B7489", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b(string|number|boolean|any|unknown|never|void|undefined|null)\\b",
+        "style": { "color": "#2B7489" }
+      },
+      {
+        "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'|`[^`]*`",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b([A-Z][a-zA-Z0-9]*)\\b",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "python": {
+    "rules": [
+      {
+        "pattern": "\\b(and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\\b",
+        "style": { "color": "#FF9500", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b(True|False|None)\\b",
+        "style": { "color": "#7EC3EB" }
+      },
+      {
+        "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?[jJ]?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "f[\"'][^\"']*\\{[^}]*\\}[^\"']*[\"']",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "\"\"\"[\\s\\S]*?\"\"\"|'''[\\s\\S]*?'''|\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "#.*$",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b([A-Z][a-zA-Z0-9_]*)\\b",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "json": {
+    "rules": [
+      {
+        "pattern": "\\b(true|false|null)\\b",
+        "style": { "color": "#7EC3EB" }
+      },
+      {
+        "pattern": "\\b-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*:",
+        "style": { "color": "#FF9500", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold", "textDecoration": "underline" }
+      }
+    ]
+  },
+
+  "yaml": {
+    "rules": [
+      {
+        "pattern": "^\\s*([\\w\\-]+)\\s*:",
+        "style": { "color": "#FF9500", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "&[a-zA-Z0-9_]+|\\*[a-zA-Z0-9_]+",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "\\b(true|false|null)\\b",
+        "style": { "color": "#7EC3EB" }
+      },
+      {
+        "pattern": "\\b\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "\\b-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "#.*$",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "---|\\.{3}",
+        "style": { "color": "#7F7F7F" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "html": {
+    "rules": [
+      {
+        "pattern": "<[!?]?[a-zA-Z0-9:-]+",
+        "style": { "color": "#FF9500" }
+      },
+      {
+        "pattern": "</[a-zA-Z0-9:-]+>",
+        "style": { "color": "#FF9500" }
+      },
+      {
+        "pattern": "\\b([a-zA-Z-]+)=",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "<!--[\\s\\S]*?-->",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "&[a-zA-Z0-9#]+;",
+        "style": { "color": "#7EC3EB" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "css": {
+    "rules": [
+      {
+        "pattern": "@[a-zA-Z-]+",
+        "style": { "color": "#FF9500" }
+      },
+      {
+        "pattern": "\\.[a-zA-Z][\\w-]*",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "#[a-zA-Z][\\w-]*",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "\\b([a-z-]+):",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})\\b",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "sql": {
+    "rules": [
+      {
+        "pattern": "\\b(SELECT|INSERT|UPDATE|DELETE|FROM|WHERE|JOIN|INNER|LEFT|RIGHT|OUTER|ON|AND|OR|NOT|NULL|IS|IN|EXISTS|BETWEEN|LIKE|GROUP|BY|HAVING|ORDER|ASC|DESC|LIMIT|OFFSET|UNION|ALL|DISTINCT|CREATE|TABLE|INDEX|VIEW|ALTER|DROP|TRUNCATE|PRIMARY|KEY|FOREIGN|REFERENCES|CONSTRAINT|CHECK|DEFAULT|UNIQUE|CASCADE|SET|VALUES|INTO|AS|CASE|WHEN|THEN|ELSE|END|CAST|CONVERT|COALESCE|NULLIF)\\b",
+        "style": { "color": "#FF9500", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b\\d+(\\.\\d+)?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "--.*$|/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b[A-Z_][A-Z0-9_]*\\b",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "go": {
+    "rules": [
+      {
+        "pattern": "\\b(break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go|goto|if|import|interface|map|package|range|return|select|struct|switch|type|var)\\b",
+        "style": { "color": "#00ADD8", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b(bool|string|byte|rune|uintptr|int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|float32|float64|complex64|complex128)\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?i?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "`[^`]*`",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b([A-Z][a-zA-Z0-9]*)\\b",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "rust": {
+    "rules": [
+      {
+        "pattern": "\\b(as|async|await|break|const|continue|crate|dyn|else|enum|extern|false|fn|for|if|impl|in|let|loop|match|mod|move|mut|pub|ref|return|self|Self|static|struct|super|trait|true|type|union|unsafe|use|where|while)\\b",
+        "style": { "color": "#FF9500", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b(i8|i16|i32|i64|i128|isize|u8|u16|u32|u64|u128|usize|f32|f64|bool|char|str)\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?_?([iu](size|8|16|32|64|128))?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "r#?\"([^\"\\\\]|\\\\.)*\"#?",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "'(\\\\?.)'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b([A-Z][a-zA-Z0-9]*)\\b",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "c": {
+    "rules": [
+      {
+        "pattern": "\\b(auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|restrict|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|_Bool|_Complex|_Imaginary)\\b",
+        "style": { "color": "#FF9500", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?[fFlL]?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "#.*$",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b([A-Z][a-zA-Z0-9_]*)\\b",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "cpp": {
+    "rules": [
+      {
+        "pattern": "\\b(alignas|alignof|and|and_eq|asm|atomic_cancel|atomic_commit|atomic_noexcept|auto|bitand|bitor|bool|break|case|catch|char|char8_t|char16_t|char32_t|class|co_await|co_return|co_yield|compl|concept|const|consteval|constexpr|constinit|const_cast|continue|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|final|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|override|private|protected|public|reflexpr|register|reinterpret_cast|requires|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|synchronized|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor|xor_eq)\\b",
+        "style": { "color": "#FF9500", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?[fFlL]?\\b",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "u8?\"([^\"\\\\]|\\\\.)*\"|u\"([^\"\\\\]|\\\\.)*\"|U\"([^\"\\\\]|\\\\.)*\"|L\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "//.*$|/\\*[\\s\\S]*?\\*/",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "#.*$",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "\\b([A-Z][a-zA-Z0-9_]*)\\b",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  },
+
+  "bash": {
+    "rules": [
+      {
+        "pattern": "\\b(if|then|else|elif|fi|for|in|do|done|while|until|case|esac|function|select|time|coproc)\\b",
+        "style": { "color": "#FF9500", "fontWeight": "bold" }
+      },
+      {
+        "pattern": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\(\\)",
+        "style": { "color": "#00A1D6" }
+      },
+      {
+        "pattern": "\\$\\{[a-zA-Z0-9_]+\\}|\\$\\([a-zA-Z0-9_]+\\)|\\$[a-zA-Z0-9_]+",
+        "style": { "color": "#9F3EDB" }
+      },
+      {
+        "pattern": "\"([^\"\\\\]|\\\\.)*\"|'([^'\\\\]|\\\\.)*'",
+        "style": { "color": "#2B9E00" }
+      },
+      {
+        "pattern": "#.*$",
+        "style": { "color": "#7F7F7F", "fontStyle": "italic" }
+      },
+      {
+        "pattern": "error",
+        "style": { "color": "red", "fontWeight": "bold" }
+      }
+    ]
+  }
+}
