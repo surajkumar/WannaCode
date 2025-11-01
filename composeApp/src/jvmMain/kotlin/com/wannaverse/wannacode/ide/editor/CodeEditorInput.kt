@@ -41,6 +41,8 @@ fun CodeEditorInput(tab: TabContent, viewModel: CodeEditorViewModel, onFontSizeC
 
     val diagnostics by viewModel.diagnosticLineInfoList
 
+    val language = tab.file.name.substringAfterLast('.')
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -75,7 +77,7 @@ fun CodeEditorInput(tab: TabContent, viewModel: CodeEditorViewModel, onFontSizeC
             modifier = Modifier.fillMaxWidth(),
             decorationBox = { innerTextField ->
                 Text(
-                    text = highlightCode(code = tab.text, diagnostics = diagnostics),
+                    text = highlightCode(code = tab.text, language = language, diagnostics = diagnostics),
                     style = TextStyle(
                         fontSize = fontSize,
                         fontFamily = FontFamily.Monospace,

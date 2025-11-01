@@ -49,7 +49,7 @@ fun StyleJson.toSpanStyle(): SpanStyle {
 
     val weight = when (fontWeight?.lowercase()) {
         "bold" -> FontWeight.Bold
-        else -> null
+        else -> FontWeight.Normal
     }
 
     return SpanStyle(color = colorValue, fontWeight = weight)
@@ -71,6 +71,6 @@ fun parseColorString(color: String): Color {
             }
             Color(colorLong)
         }
-        else -> throw IllegalArgumentException("Unknown color format: $color")
+        else -> Color.White
     }
 }
