@@ -9,10 +9,12 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -24,8 +26,8 @@ import com.wannaverse.wannacode.ide.IDEScreen
 import com.wannaverse.wannacode.splash.SplashPage
 import com.wannaverse.wannacode.splash.SplashPageViewModel
 import java.awt.GraphicsEnvironment
-import java.io.File
-import kotlinx.coroutines.launch
+import java.awt.MouseInfo
+import java.awt.Point
 
 val theme = darkColorScheme(
     primary = PRIMARY_BG_COLOR,
@@ -67,7 +69,6 @@ fun main() = application {
                 )
             ) {
                 val window = this.window
-                val scope = rememberCoroutineScope()
 
                 Scaffold(
                     containerColor = MaterialTheme.colorScheme.background
@@ -76,16 +77,7 @@ fun main() = application {
                         Modifier
                             .fillMaxSize()
                             .pointerInput(Unit) {
-                                detectDragGestures { change, dragAmount ->
-                                    change.consume()
-                                    val location = window.location
-                                    scope.launch {
-                                        window.setLocation(
-                                            location.x + dragAmount.x.toInt(),
-                                            location.y + dragAmount.y.toInt()
-                                        )
-                                    }
-                                }
+                                windowMovement(window)
                             }
                     ) {
                         SplashPage(
@@ -122,4 +114,27 @@ fun main() = application {
             }
         }
     }
+}
+
+suspend fun PointerInputScope.windowMovement(window: ComposeWindow) {
+    var initialClick = Offset.Zero
+    var initialWindowLocation = Point(0, 0)
+
+    detectDragGestures(
+        onDragStart = {
+            val mousePos = MouseInfo.getPointerInfo().location
+            initialClick = Offset(mousePos.x.toFloat(), mousePos.y.toFloat())
+            initialWindowLocation = window.location
+        },
+        onDrag = { change, _ ->
+            change.consume()
+            val mousePos = MouseInfo.getPointerInfo().location
+            val dx = mousePos.x - initialClick.x
+            val dy = mousePos.y - initialClick.y
+            window.setLocation(
+                (initialWindowLocation.x + dx).toInt(),
+                (initialWindowLocation.y + dy).toInt()
+            )
+        }
+    )
 }
