@@ -23,6 +23,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.wannaverse.wannacode.ide.IDEScreen
+import com.wannaverse.wannacode.ide.editor.jdt.launchJdtServer
 import com.wannaverse.wannacode.splash.SplashPage
 import com.wannaverse.wannacode.splash.SplashPageViewModel
 import java.awt.GraphicsEnvironment
@@ -109,6 +110,10 @@ fun main() = application {
                 Scaffold(
                     containerColor = MaterialTheme.colorScheme.background
                 ) {
+                    Thread {
+                        launchJdtServer(viewModel.getDir())
+                    }.start()
+
                     IDEScreen(viewModel.getDir())
                 }
             }

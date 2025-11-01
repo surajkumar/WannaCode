@@ -13,13 +13,12 @@ fun highlightCode(
     diagnostics: List<DiagnosticLineInfo> = emptyList()
 ): AnnotatedString {
     val builder = AnnotatedString.Builder()
-    val syntax = syntaxMap[language] ?: return AnnotatedString(code)
+    val syntax = loadSyntaxMap("syntax_map.json")[language] ?: return AnnotatedString(code)
 
     val lines = code.lines()
     var charIndex = 0
 
     lines.forEachIndexed { lineNumber, lineText ->
-        // Apply syntax highlighting per line
         var index = 0
         while (index < lineText.length) {
             var matched = false
@@ -38,13 +37,11 @@ fun highlightCode(
             }
         }
 
-        // Add a newline (except after the last line)
-        if (lineNumber < lines.size - 1) builder.append('\n')
+        if (lineNumber < lines.size - 1) {
+            builder.append('\n')
+        }
 
-        // Check if this line has diagnostics
         val diagsOnLine = diagnostics.filter { it.diagnosticLine == lineNumber }
-
-        // Track applied ranges as pairs of (start, end)
         val appliedRanges = mutableSetOf<Pair<Int, Int>>()
 
         diagsOnLine.forEach { diagnostic ->
@@ -54,11 +51,11 @@ fun highlightCode(
                 val start = diagnostic.startChar
                 val end = diagnostic.endChar
 
-                val rangePair = start to end // track just the line-relative positions
+                val rangePair = start to end
                 if (rangePair !in appliedRanges) {
                     builder.addStyle(
                         SpanStyle(color = ERROR_RED),
-                        start = charIndex + start, // still add charIndex for styling
+                        start = charIndex + start,
                         end = charIndex + end
                     )
 
@@ -74,7 +71,7 @@ fun highlightCode(
             }
         }
 
-        charIndex += lineText.length + 1 // +1 for '\n'
+        charIndex += lineText.length + 1
     }
 
     return builder.toAnnotatedString()

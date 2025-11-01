@@ -36,16 +36,10 @@ fun CodeEditor(viewModel: CodeEditorViewModel) {
 
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(Unit) {
-        viewModel.startJdtServer(viewModel.directory.value)
-    }
-
     LaunchedEffect(tab.text) {
-        viewModel.getDiagnostics(tab.file, tab.text)
-        viewModel.populateQuickFixesByLine(
-            tabId = tab.id,
-            file = "file:///" + tab.file.absolutePath.replace("\\", "/")
-        )
+        if (tab.file.name.endsWith(".java")) {
+            viewModel.loadDiagnostics(tab)
+        }
     }
 
     var fontSize by remember { mutableStateOf(14.sp) }

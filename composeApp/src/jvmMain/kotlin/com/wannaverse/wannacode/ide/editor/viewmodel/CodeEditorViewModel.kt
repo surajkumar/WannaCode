@@ -68,15 +68,18 @@ class CodeEditorViewModel : ViewModel() {
         launchJdtServer(workspace = File(project.parent))
     }
 
-    fun getDiagnostics(file: File, content: String) {
-        if (!file.name.endsWith(".java")) {
-            return
-        }
-        return getDiagnostics(
-            code = content,
-            fileLocation = file.absolutePath
+    fun loadDiagnostics(tab: TabContent) = viewModelScope.launch {
+        getDiagnostics(tab.file, tab.text)
+        populateQuickFixesByLine(
+            tabId = tab.id,
+            file = "file:///" + tab.file.absolutePath.replace("\\", "/")
         )
     }
+
+    fun getDiagnostics(file: File, content: String) = getDiagnostics(
+        code = content,
+        fileLocation = file.absolutePath
+    )
 
     fun applyFix(change: Change) {
         val tabId = currentTab.value
