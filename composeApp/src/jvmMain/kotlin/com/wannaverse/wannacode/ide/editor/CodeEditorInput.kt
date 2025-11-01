@@ -36,7 +36,7 @@ import kotlin.math.min
 @Composable
 fun CodeEditorInput(tab: TabContent, viewModel: CodeEditorViewModel, onFontSizeChange: (TextUnit) -> Unit) {
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
-    var fontSize by remember { mutableStateOf(14.sp) } // Dynamic font size
+    var fontSize by remember { mutableStateOf(14.sp) }
     val scrollSpeed = 2f
 
     val diagnostics by viewModel.diagnosticLineInfoList
