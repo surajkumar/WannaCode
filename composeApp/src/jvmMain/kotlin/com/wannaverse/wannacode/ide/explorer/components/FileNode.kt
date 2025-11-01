@@ -97,7 +97,7 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
                 Icon(
                     painter = painterResource(Res.drawable.file),
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
             }
