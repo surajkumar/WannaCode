@@ -78,11 +78,11 @@ fun CodeEditorTabs(viewModel: CodeEditorViewModel) {
                             Icon(
                                 painter = painterResource(Res.drawable.file),
                                 contentDescription = null,
-                                tint = Color.White
+                                tint = Color.Gray
                             )
                             Text(
                                 text = fileName,
-                                color = Color.White,
+                                color = Color.LightGray,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
