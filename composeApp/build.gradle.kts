@@ -29,6 +29,8 @@ kotlin {
             implementation(libs.kotlinx.coroutinesSwing)
 
             implementation(libs.json)
+            implementation(libs.eclipse.lsp4j)
+            implementation(libs.eclipse.lsp4j.jsonrpc)
         }
     }
 }

@@ -7,6 +7,8 @@ kotlin = "2.2.20"
 kotlinx-coroutines = "1.10.2"
 json = "20210307"
 
+eclipse-jdt = "0.21.1"
+
 # Plugins
 spotless = "8.0.0"
 
@@ -19,6 +21,9 @@ androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 
 json = { module = "org.json:json", version.ref = "json"}
+
+eclipse-lsp4j = { module = "org.eclipse.lsp4j:org.eclipse.lsp4j", version.ref = "eclipse-jdt"}
+eclipse-lsp4j-jsonrpc = { module = "org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc", version.ref = "eclipse-jdt"}
 
 [plugins]
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
