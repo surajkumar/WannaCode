@@ -10,7 +10,6 @@ import com.wannaverse.wannacode.ide.editor.CodeEditor
 import com.wannaverse.wannacode.ide.editor.CodeEditorTabs
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import com.wannaverse.wannacode.ide.explorer.FileExplorer
-import com.wannaverse.wannacode.ide.terminal.Terminal
 import java.io.File
 
 @Composable
@@ -30,10 +29,6 @@ fun IDEScreen(directory: File, viewModel: CodeEditorViewModel = viewModel { Code
                 CodeEditorTabs(viewModel)
                 CodeEditor(viewModel)
             }
-        }
-
-        Column {
-            Terminal()
         }
     }
 }
