@@ -66,12 +66,5 @@ fun CodeEditor(viewModel: CodeEditorViewModel) {
 
             Scrollbar(scrollState, Modifier.align(Alignment.CenterEnd))
         }
-
-        InfoPanel(
-            viewModel = viewModel,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-        )
     }
 }
