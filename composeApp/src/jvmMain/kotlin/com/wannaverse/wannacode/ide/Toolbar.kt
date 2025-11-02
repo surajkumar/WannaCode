@@ -23,7 +23,6 @@ import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
 import wannacode.composeapp.generated.resources.close_cross
-import wannacode.composeapp.generated.resources.hamburg
 import wannacode.composeapp.generated.resources.minimize
 import wannacode.composeapp.generated.resources.play
 
@@ -40,12 +39,7 @@ fun Toolbar(viewModel: CodeEditorViewModel) {
             )
     ) {
         Row {
-            Icon(
-                painter = painterResource(Res.drawable.hamburg),
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(15.dp)
-            )
+            Hamburger()
 
             Spacer(Modifier.width(30.dp))
 
