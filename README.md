@@ -1,3 +1,5 @@
+<img alt="logo" src="logo.svg" width="288"/>
+
 # WannaCode
 An ultra light IDE for Java programming.
 
