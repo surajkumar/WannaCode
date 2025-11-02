@@ -48,7 +48,7 @@ fun CodeEditorGutter(
     Column(
         modifier = Modifier
             .padding(end = 8.dp)
-            .background(Color(0xFF17171D))
+            // .background(Color(0xFF17171D))
             .padding(start = 5.dp, end = 10.dp)
             .fillMaxHeight()
     ) {
@@ -56,7 +56,6 @@ fun CodeEditorGutter(
             val diagsForLine = diagnosticsByLine[index] ?: emptyList()
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Line number with dynamic fontSize
                 Text(
                     text = "${index + 1}",
                     color = Color(0xFF383838),

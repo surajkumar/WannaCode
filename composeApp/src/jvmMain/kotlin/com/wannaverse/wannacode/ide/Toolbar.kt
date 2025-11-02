@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wannaverse.wannacode.STROKE_COLOR
@@ -38,48 +40,10 @@ fun Toolbar(viewModel: CodeEditorViewModel) {
                 top = 20.dp
             )
     ) {
-        Row {
+        Row(modifier = Modifier.padding(bottom = 20.dp)) {
             Hamburger()
 
-            Spacer(Modifier.width(30.dp))
-
-            Dropdown(
-                selectedOption = viewModel.projectName.value,
-                options = listOf(),
-                onOptionSelected = { },
-                modifier = Modifier.width(200.dp).height(43.dp).padding(bottom = 10.dp).offset(y = (-5).dp),
-                backgroundColor = Color(0xFF16161A),
-                alignTextAlign = TextAlign.Center
-            )
-
-            Spacer(Modifier.width(20.dp))
-
-            PlainDropdown(
-                selectedOption = "Version Control",
-                options = listOf("Pull", "Commit", "Push", "New Branch", "Change Branch"),
-                onOptionSelected = {},
-                modifier = Modifier.width(130.dp).offset(y = (-3).dp)
-            )
-
             Spacer(Modifier.weight(1f))
-
-            Dropdown(
-                selectedOption = "./gradlew run",
-                options = listOf(""),
-                onOptionSelected = { },
-                modifier = Modifier.width(200.dp).offset(y = (-10).dp).height(40.dp)
-            )
-
-            Spacer(Modifier.width(10.dp))
-
-            Icon(
-                painter = painterResource(Res.drawable.play),
-                contentDescription = null,
-                tint = Color(0xFF27FF27),
-                modifier = Modifier.size(20.dp)
-            )
-
-            Spacer(Modifier.width(100.dp))
 
             Icon(
                 painter = painterResource(Res.drawable.minimize),

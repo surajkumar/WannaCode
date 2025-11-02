@@ -44,6 +44,12 @@ fun CodeEditor(viewModel: CodeEditorViewModel) {
 
     var fontSize by remember { mutableStateOf(14.sp) }
 
+    EditorMenu(
+        tab = tab,
+        viewModel = viewModel,
+        fontSize = fontSize
+    )
+
     Column(modifier = Modifier.fillMaxSize()) {
         BoxWithConstraints(
             modifier = Modifier
@@ -58,20 +64,22 @@ fun CodeEditor(viewModel: CodeEditorViewModel) {
                     .heightIn(max = maxHeight)
                     .verticalScroll(scrollState)
             ) {
-                CodeEditorGutter(tab, viewModel = viewModel, fontSize = fontSize)
-                CodeEditorInput(tab, viewModel = viewModel, onFontSizeChange = {
-                    fontSize = it
-                })
+                CodeEditorGutter(
+                    tab = tab,
+                    viewModel = viewModel,
+                    fontSize = fontSize
+                )
+
+                CodeEditorInput(
+                    tab = tab,
+                    viewModel = viewModel,
+                    onFontSizeChange = {
+                        fontSize = it
+                    }
+                )
             }
 
             Scrollbar(scrollState, Modifier.align(Alignment.CenterEnd))
         }
-
-        InfoPanel(
-            viewModel = viewModel,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-        )
     }
 }

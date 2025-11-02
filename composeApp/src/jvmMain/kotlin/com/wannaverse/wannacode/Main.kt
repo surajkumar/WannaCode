@@ -110,10 +110,6 @@ fun main() = application {
                 Scaffold(
                     containerColor = MaterialTheme.colorScheme.background
                 ) {
-                    Thread {
-                        launchJdtServer(viewModel.getDir())
-                    }.start()
-
                     IDEScreen(viewModel.getDir())
                 }
             }
