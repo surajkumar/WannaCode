@@ -2,7 +2,6 @@ package com.wannaverse.wannacode.ide.editor
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,7 +45,6 @@ fun CodeEditorInput(tab: TabContent, viewModel: CodeEditorViewModel, onFontSizeC
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 5.dp)
             .pointerInput(Unit) {
                 awaitPointerEventScope {
                     while (true) {
