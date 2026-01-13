@@ -15,6 +15,7 @@ import com.wannaverse.wannacode.ide.editor.jdt.applyQuickFix
 import com.wannaverse.wannacode.ide.editor.jdt.getDiagnostics
 import com.wannaverse.wannacode.ide.editor.jdt.launchJdtServer
 import com.wannaverse.wannacode.ide.editor.jdt.quickFixes
+import com.wannaverse.wannacode.ide.editor.virtualized.VirtualizedEditorState
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
@@ -48,6 +49,8 @@ class CodeEditorViewModel : ViewModel() {
     private val tabTexts = mutableStateMapOf<Int, MutableStateFlow<String>>()
     private var saveJob: Job? = null
     private val gson = Gson()
+
+    private val editorStates = mutableStateMapOf<Int, VirtualizedEditorState>()
 
     fun addLog(msg: String, tabId: Int = currentTab.value) {
         val state = tabLogs.getOrPut(tabId) { mutableStateOf(emptyList()) }
@@ -209,6 +212,7 @@ class CodeEditorViewModel : ViewModel() {
         _tabContents.remove(tabId)
         tabLogs.remove(tabId)
         tabDiagnostics.remove(tabId)
+        editorStates.remove(tabId)
 
         if (currentTab.value == tabId) {
             currentTab.value = activeTabTitles.firstOrNull()?.let { title ->
@@ -300,6 +304,28 @@ class CodeEditorViewModel : ViewModel() {
         _tabContents[id] = tab.copy(text = newText, isDirty = true)
         tabTexts[id]?.value = newText
         debounceSave(tab.file, newText)
+    }
+
+    fun getEditorState(tabId: Int): VirtualizedEditorState = editorStates.getOrPut(tabId) {
+        val tab = _tabContents[tabId]
+        VirtualizedEditorState(
+            initialText = tab?.text ?: "",
+            readOnly = tab?.readOnly ?: false
+        )
+    }
+
+    fun syncEditorState(tabId: Int) {
+        val state = editorStates[tabId] ?: return
+        val tab = _tabContents[tabId] ?: return
+        val newText = state.document.getText()
+        if (tab.text != newText) {
+            _tabContents[tabId] = tab.copy(text = newText, isDirty = true)
+            debounceSave(tab.file, newText)
+        }
+    }
+
+    fun clearEditorState(tabId: Int) {
+        editorStates.remove(tabId)
     }
 
     private fun debounceSave(file: File, text: String) {
