@@ -65,7 +65,8 @@ fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, c
         ) {
             Row(
                 modifier = Modifier
-                    .pointerInput(Unit) {
+                    .clickable { expanded = !expanded }
+                    .pointerInput(file) {
                         awaitPointerEventScope {
                             while (true) {
                                 val event = awaitPointerEvent()
@@ -77,30 +78,28 @@ fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, c
                             }
                         }
                     }
-                    .clickable { expanded = !expanded }
                     .padding(vertical = 2.dp),
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     painter = if (expanded)
                         painterResource(Res.drawable.down_cheveron)
                     else painterResource(Res.drawable.right_cheveron),
-                    contentDescription = null,
+                    contentDescription = if (expanded) "Collapse" else "Expand",
                     tint = Color.White,
                     modifier = Modifier.size(10.dp)
                 )
 
-                Spacer(Modifier.width(5.dp))
+                Spacer(Modifier.width(4.dp))
 
                 Icon(
                     painter = painterResource(Res.drawable.folder),
                     contentDescription = null,
                     tint = Color.DarkGray,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(20.dp)
                 )
 
-                Spacer(Modifier.width(5.dp))
+                Spacer(Modifier.width(6.dp))
 
                 Text(
                     maxLines = 1,

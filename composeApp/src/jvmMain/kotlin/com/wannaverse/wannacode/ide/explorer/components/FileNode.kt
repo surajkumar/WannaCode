@@ -59,7 +59,8 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
         Row(
             modifier = Modifier
                 .padding(start = (indent * 8).dp)
-                .pointerInput(Unit) {
+                .clickable { viewModel.openFile(file) }
+                .pointerInput(file) {
                     awaitPointerEventScope {
                         while (true) {
                             val event = awaitPointerEvent()
@@ -72,9 +73,10 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
                     }
                 }
                 .padding(vertical = 2.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Spacer(Modifier.width(14.dp))
+
             val extension = file.extension.lowercase()
             val badge = fileBadges[extension]
 
@@ -98,19 +100,16 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
                     painter = painterResource(Res.drawable.file),
                     contentDescription = null,
                     tint = Color.Gray,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
 
-            Spacer(Modifier.width(5.dp))
+            Spacer(Modifier.width(6.dp))
 
             Text(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                text = file.name,
-                modifier = Modifier.clickable {
-                    viewModel.openFile(file)
-                }
+                text = file.name
             )
         }
 
