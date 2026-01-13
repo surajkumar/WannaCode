@@ -1,5 +1,6 @@
 package com.wannaverse.wannacode.ide
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import com.wannaverse.wannacode.ide.editor.CodeEditorTabs
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import com.wannaverse.wannacode.ide.explorer.FileExplorer
 import com.wannaverse.wannacode.ide.terminal.Terminal
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 import java.io.File
 
 @Composable
@@ -20,11 +22,12 @@ fun IDEScreen(
     viewModel: CodeEditorViewModel = viewModel { CodeEditorViewModel() },
     window: ComposeWindow? = null
 ) {
+    val colors = WannaCodeTheme.colors
     viewModel.projectName.value = directory.name
     viewModel.directory.value = directory
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().background(colors.background)
     ) {
         Toolbar(viewModel, window)
 

@@ -1,5 +1,6 @@
 package com.wannaverse.wannacode.ide
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,14 +15,13 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.wannaverse.wannacode.STROKE_COLOR
 import com.wannaverse.wannacode.common.Dropdown
 import com.wannaverse.wannacode.common.PlainDropdown
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 import com.wannaverse.wannacode.windowMovement
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
@@ -31,10 +31,13 @@ import wannacode.composeapp.generated.resources.play
 
 @Composable
 fun Toolbar(viewModel: CodeEditorViewModel, window: ComposeWindow? = null) {
+    val colors = WannaCodeTheme.colors
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, STROKE_COLOR)
+            .background(colors.background)
+            .border(1.dp, colors.border)
             .padding(
                 start = 20.dp,
                 end = 20.dp,
@@ -58,7 +61,7 @@ fun Toolbar(viewModel: CodeEditorViewModel, window: ComposeWindow? = null) {
                 options = listOf(),
                 onOptionSelected = { },
                 modifier = Modifier.width(200.dp).height(43.dp).padding(bottom = 10.dp).offset(y = (-5).dp),
-                backgroundColor = Color(0xFF16161A),
+                backgroundColor = colors.toolbarBackground,
                 alignTextAlign = TextAlign.Center
             )
 
@@ -85,7 +88,7 @@ fun Toolbar(viewModel: CodeEditorViewModel, window: ComposeWindow? = null) {
             Icon(
                 painter = painterResource(Res.drawable.play),
                 contentDescription = null,
-                tint = Color(0xFF27FF27),
+                tint = colors.toolbarIconSuccess,
                 modifier = Modifier.size(20.dp)
             )
 
@@ -94,7 +97,7 @@ fun Toolbar(viewModel: CodeEditorViewModel, window: ComposeWindow? = null) {
             Icon(
                 painter = painterResource(Res.drawable.minimize),
                 contentDescription = null,
-                tint = Color.White,
+                tint = colors.toolbarIcon,
                 modifier = Modifier.padding(top = 1.dp).size(10.dp)
             )
 
@@ -103,7 +106,7 @@ fun Toolbar(viewModel: CodeEditorViewModel, window: ComposeWindow? = null) {
             Icon(
                 painter = painterResource(Res.drawable.close_cross),
                 contentDescription = null,
-                tint = Color.White,
+                tint = colors.toolbarIcon,
                 modifier = Modifier.size(10.dp)
             )
         }

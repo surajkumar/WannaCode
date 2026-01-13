@@ -16,10 +16,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wannaverse.wannacode.ERROR_RED
 import com.wannaverse.wannacode.common.Dropdown
 import com.wannaverse.wannacode.common.FolderSelector
 import com.wannaverse.wannacode.common.InputField
@@ -27,6 +25,7 @@ import com.wannaverse.wannacode.common.SimpleCheckbox
 import com.wannaverse.wannacode.splash.BuildSystemInstallation
 import com.wannaverse.wannacode.splash.GradleDsl
 import com.wannaverse.wannacode.splash.SplashPageViewModel
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 import java.util.Locale.getDefault
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
@@ -34,6 +33,8 @@ import wannacode.composeapp.generated.resources.folder
 
 @Composable
 fun GradleSettings(viewModel: SplashPageViewModel) {
+    val colors = WannaCodeTheme.colors
+
     LaunchedEffect(Unit) {
         viewModel.fetchGradleVersions()
     }
@@ -50,7 +51,7 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
     }
 
     Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-        Text(text = "Wrapper")
+        Text(text = "Wrapper", color = colors.textPrimary)
 
         SimpleCheckbox(
             checked = viewModel.selectedBuildSystemInstallation.value == BuildSystemInstallation.WRAPPER,
@@ -59,7 +60,7 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
             }
         )
 
-        Text(text = "Local Installation")
+        Text(text = "Local Installation", color = colors.textPrimary)
 
         SimpleCheckbox(
             checked = viewModel.selectedBuildSystemInstallation.value == BuildSystemInstallation.LOCAL,
@@ -75,6 +76,7 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
         Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
             Text(
                 text = "Gradle Installation",
+                color = colors.textPrimary,
                 modifier = Modifier.padding(top = 10.dp)
             )
 
@@ -89,7 +91,7 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
                     Icon(
                         painter = painterResource(Res.drawable.folder),
                         contentDescription = "Browse folder",
-                        tint = Color(0xFFB0B0B0),
+                        tint = colors.textTertiary,
                         modifier = Modifier
                             .size(20.dp)
                             .clickable { showFolderDialog = true }
@@ -102,6 +104,7 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         Text(
             text = "Distribution",
+            color = colors.textPrimary,
             modifier = Modifier.padding(top = 5.dp)
         )
 
@@ -117,6 +120,7 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
     Row(horizontalArrangement = Arrangement.spacedBy(70.dp)) {
         Text(
             text = "DSL",
+            color = colors.textPrimary,
             modifier = Modifier.padding(top = 5.dp)
         )
 
@@ -130,6 +134,7 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
     Row(horizontalArrangement = Arrangement.spacedBy(23.dp)) {
         Text(
             text = "Group ID",
+            color = colors.textPrimary,
             modifier = Modifier.padding(top = 10.dp)
         )
 
@@ -142,7 +147,7 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
                 viewModel.getGroupIdError()?.let {
                     Text(
                         text = it,
-                        color = ERROR_RED,
+                        color = colors.error,
                         fontSize = 12.sp
                     )
                 }
@@ -154,6 +159,7 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
     Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
         Text(
             text = "Artifact ID",
+            color = colors.textPrimary,
             modifier = Modifier.padding(top = 10.dp)
         )
 
@@ -166,7 +172,7 @@ fun GradleSettings(viewModel: SplashPageViewModel) {
                 viewModel.getArtifactIdError()?.let {
                     Text(
                         text = it,
-                        color = ERROR_RED,
+                        color = colors.error,
                         fontSize = 12.sp
                     )
                 }

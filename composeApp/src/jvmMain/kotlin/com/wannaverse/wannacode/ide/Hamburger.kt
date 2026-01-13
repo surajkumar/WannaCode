@@ -15,21 +15,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
 import wannacode.composeapp.generated.resources.hamburg
 
 @Composable
 fun Hamburger() {
+    val colors = WannaCodeTheme.colors
     var expanded by remember { mutableStateOf(false) }
 
     Icon(
         painter = painterResource(Res.drawable.hamburg),
         contentDescription = null,
-        tint = Color.White,
+        tint = colors.toolbarIcon,
         modifier = Modifier.size(15.dp).clickable { expanded = !expanded }
     )
 
@@ -37,14 +38,14 @@ fun Hamburger() {
         expanded = expanded,
         onDismissRequest = { expanded = false },
         modifier = Modifier
-            .background(Color(0xFF17171D))
-            .border(1.dp, Color(0xFF373737), RoundedCornerShape(5.dp))
+            .background(colors.menuBackground)
+            .border(1.dp, colors.menuBorder, RoundedCornerShape(5.dp))
     ) {
         DropdownMenuItem(
             text = {
                 Text(
                     text = "New Project",
-                    color = Color(0xFFB6B6B6),
+                    color = colors.menuText,
                     fontSize = 14.sp
                 )
             },
@@ -56,7 +57,7 @@ fun Hamburger() {
             text = {
                 Text(
                     text = "Open",
-                    color = Color(0xFFB6B6B6),
+                    color = colors.menuText,
                     fontSize = 14.sp
                 )
             },
@@ -68,7 +69,7 @@ fun Hamburger() {
             text = {
                 Text(
                     text = "Close",
-                    color = Color(0xFFB6B6B6),
+                    color = colors.menuText,
                     fontSize = 14.sp
                 )
             },

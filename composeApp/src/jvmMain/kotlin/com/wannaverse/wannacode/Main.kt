@@ -13,7 +13,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
@@ -26,100 +25,125 @@ import com.wannaverse.wannacode.ide.IDEScreen
 import com.wannaverse.wannacode.ide.editor.jdt.launchJdtServer
 import com.wannaverse.wannacode.splash.SplashPage
 import com.wannaverse.wannacode.splash.SplashPageViewModel
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 import java.awt.GraphicsEnvironment
 import java.awt.MouseInfo
 import java.awt.Point
 
-val theme = darkColorScheme(
-    primary = PRIMARY_BG_COLOR,
-    onPrimary = Color.White,
-    primaryContainer = PRIMARY_BG_COLOR,
-    onPrimaryContainer = Color.White,
-    secondary = Color.White,
-    onSecondary = Color.Black,
-    secondaryContainer = PRIMARY_BG_COLOR,
-    onSecondaryContainer = Color.White,
-    tertiaryContainer = Color.Blue,
-    onTertiaryContainer = Color.White,
-    background = PRIMARY_BG_COLOR,
-    onBackground = Color.White,
-    surface = PRIMARY_BG_COLOR,
-    onSurface = Color.White,
-    onSurfaceVariant = Color.White,
-    surfaceContainer = PRIMARY_BG_COLOR,
-    outline = Color(0xff303c4c),
-    error = Color.Red
-)
-
 fun main() = application {
     var showSplash by remember { mutableStateOf(true) }
+    var isDarkTheme by remember { mutableStateOf(true) }
 
-    MaterialTheme(
-        colorScheme = theme
-    ) {
-        val viewModel = remember { SplashPageViewModel() }
+    WannaCodeTheme(darkTheme = isDarkTheme) {
+        val themeColors = WannaCodeTheme.colors
 
-        if (showSplash) {
-            Window(
-                onCloseRequest = ::exitApplication,
-                title = "WannaCode",
-                undecorated = true,
-                state = rememberWindowState(
-                    width = 1200.dp,
-                    height = 1000.dp
-                )
-            ) {
-                val window = this.window
+        val colorScheme = if (isDarkTheme) {
+            darkColorScheme(
+                primary = themeColors.accent,
+                onPrimary = themeColors.textPrimary,
+                primaryContainer = themeColors.background,
+                onPrimaryContainer = themeColors.textPrimary,
+                secondary = themeColors.textPrimary,
+                onSecondary = themeColors.background,
+                secondaryContainer = themeColors.backgroundSecondary,
+                onSecondaryContainer = themeColors.textPrimary,
+                background = themeColors.background,
+                onBackground = themeColors.textPrimary,
+                surface = themeColors.surface,
+                onSurface = themeColors.textPrimary,
+                onSurfaceVariant = themeColors.textSecondary,
+                surfaceContainer = themeColors.backgroundSecondary,
+                outline = themeColors.border,
+                error = themeColors.error
+            )
+        } else {
+            androidx.compose.material3.lightColorScheme(
+                primary = themeColors.accent,
+                onPrimary = themeColors.textPrimary,
+                primaryContainer = themeColors.background,
+                onPrimaryContainer = themeColors.textPrimary,
+                secondary = themeColors.textPrimary,
+                onSecondary = themeColors.background,
+                secondaryContainer = themeColors.backgroundSecondary,
+                onSecondaryContainer = themeColors.textPrimary,
+                background = themeColors.background,
+                onBackground = themeColors.textPrimary,
+                surface = themeColors.surface,
+                onSurface = themeColors.textPrimary,
+                onSurfaceVariant = themeColors.textSecondary,
+                surfaceContainer = themeColors.backgroundSecondary,
+                outline = themeColors.border,
+                error = themeColors.error
+            )
+        }
 
-                Scaffold(
-                    containerColor = MaterialTheme.colorScheme.background
+        MaterialTheme(
+            colorScheme = colorScheme
+        ) {
+            val viewModel = remember { SplashPageViewModel() }
+
+            if (showSplash) {
+                Window(
+                    onCloseRequest = ::exitApplication,
+                    title = "WannaCode",
+                    undecorated = true,
+                    state = rememberWindowState(
+                        width = 1200.dp,
+                        height = 1000.dp
+                    )
                 ) {
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .pointerInput(Unit) {
-                                windowMovement(window)
-                            }
+                    val window = this.window
+
+                    Scaffold(
+                        containerColor = MaterialTheme.colorScheme.background
                     ) {
-                        SplashPage(
-                            viewModel = viewModel { viewModel },
-                            hideSplash = {
-                                showSplash = false
-                            }
-                        )
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .pointerInput(Unit) {
+                                    windowMovement(window)
+                                }
+                        ) {
+                            SplashPage(
+                                viewModel = viewModel { viewModel },
+                                hideSplash = {
+                                    showSplash = false
+                                }
+                            )
+                        }
                     }
                 }
-            }
-        } else {
-            val screenBounds = GraphicsEnvironment
-                .getLocalGraphicsEnvironment()
-                .maximumWindowBounds
+            } else {
+                val screenBounds = GraphicsEnvironment
+                    .getLocalGraphicsEnvironment()
+                    .maximumWindowBounds
 
-            val windowState = rememberWindowState(
-                position = WindowPosition(screenBounds.x.dp, screenBounds.y.dp),
-                width = screenBounds.width.dp,
-                height = screenBounds.height.dp
-            )
+                val windowState = rememberWindowState(
+                    position = WindowPosition(screenBounds.x.dp, screenBounds.y.dp),
+                    width = screenBounds.width.dp,
+                    height = screenBounds.height.dp
+                )
 
-            Window(
-                onCloseRequest = ::exitApplication,
-                title = "WannaCode - Editor",
-                undecorated = true,
-                state = windowState
-            ) {
-                val window = this.window
-
-                Scaffold(
-                    containerColor = MaterialTheme.colorScheme.background
+                Window(
+                    onCloseRequest = ::exitApplication,
+                    title = "WannaCode - Editor",
+                    undecorated = true,
+                    state = windowState
                 ) {
-                    Thread {
-                        launchJdtServer(viewModel.getDir())
-                    }.start()
+                    val window = this.window
 
-                    IDEScreen(
-                        directory = viewModel.getDir(),
-                        window = window
-                    )
+                    Scaffold(
+                        containerColor = MaterialTheme.colorScheme.background
+                    ) {
+                        Thread {
+                            launchJdtServer(viewModel.getDir())
+                        }.start()
+
+                        IDEScreen(
+                            directory = viewModel.getDir(),
+                            window = window
+                        )
+                    }
                 }
             }
         }

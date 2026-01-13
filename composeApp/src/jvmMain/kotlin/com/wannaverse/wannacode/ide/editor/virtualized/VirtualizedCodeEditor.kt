@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wannaverse.wannacode.ide.editor.syntax.loadSyntaxMap
 import com.wannaverse.wannacode.ide.editor.viewmodel.DiagnosticLineInfo
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 
 @Composable
 fun VirtualizedCodeEditor(
@@ -51,16 +51,17 @@ fun VirtualizedCodeEditor(
     fontSize: Float = 14f,
     onTextChange: (String) -> Unit
 ) {
+    val colors = WannaCodeTheme.colors
     val density = LocalDensity.current
     val textMeasurer = rememberTextMeasurer()
     val focusRequester = remember(state) { FocusRequester() }
 
-    val textStyle = remember(fontSize) {
+    val textStyle = remember(fontSize, colors.textPrimary) {
         TextStyle(
             fontSize = fontSize.sp,
             fontFamily = FontFamily.Monospace,
             lineHeight = (fontSize * 1.5f).sp,
-            color = Color(0xFFD4D4D4)
+            color = colors.textPrimary
         )
     }
 
@@ -116,7 +117,7 @@ fun VirtualizedCodeEditor(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF17171D))
+            .background(colors.editorBackground)
             .onSizeChanged { size ->
                 val lineHeight = state.lineHeightPx.takeIf { it > 0 } ?: 24f
                 state.visibleLineCount = (size.height / lineHeight).toInt().coerceAtLeast(1)
@@ -127,7 +128,7 @@ fun VirtualizedCodeEditor(
                 state = state.scrollState,
                 modifier = Modifier
                     .width(gutterWidthDp)
-                    .background(Color(0xFF17171D))
+                    .background(colors.editorGutter)
                     .padding(horizontal = 8.dp),
                 userScrollEnabled = false
             ) {
@@ -147,7 +148,7 @@ fun VirtualizedCodeEditor(
                         Text(
                             text = lineNumber,
                             style = textStyle.copy(
-                                color = if (isCurrentLine) Color(0xFF858585) else Color(0xFF383838)
+                                color = if (isCurrentLine) colors.editorLineNumberActive else colors.editorLineNumber
                             )
                         )
 
@@ -157,7 +158,7 @@ fun VirtualizedCodeEditor(
                                     .padding(start = 4.dp)
                                     .width(8.dp)
                                     .height(8.dp)
-                                    .background(Color(0xFFDE4545), shape = androidx.compose.foundation.shape.CircleShape)
+                                    .background(colors.diagnosticError, shape = androidx.compose.foundation.shape.CircleShape)
                             )
                         }
                     }

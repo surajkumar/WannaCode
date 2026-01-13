@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
 import wannacode.composeapp.generated.resources.cross
@@ -27,6 +28,7 @@ import wannacode.composeapp.generated.resources.file
 
 @Composable
 fun CodeEditorTabs(viewModel: CodeEditorViewModel) {
+    val colors = WannaCodeTheme.colors
     val tabIds = viewModel.orderedTabIds
     val currentTabId by viewModel.currentTab
     val selectedTabIndex = tabIds.indexOf(currentTabId).coerceAtLeast(0)
@@ -35,10 +37,10 @@ fun CodeEditorTabs(viewModel: CodeEditorViewModel) {
         selectedTabIndex = selectedTabIndex,
         edgePadding = 8.dp,
         backgroundColor = Color.Transparent,
-        contentColor = Color.White,
+        contentColor = colors.textPrimary,
         indicator = {},
         divider = {},
-        modifier = Modifier.border(1.dp, Color(0xFF1B1B1B))
+        modifier = Modifier.border(1.dp, colors.tabBorder)
     ) {
         tabIds.forEachIndexed { _, tabId ->
             val tab = viewModel.tabContents[tabId]
@@ -50,14 +52,14 @@ fun CodeEditorTabs(viewModel: CodeEditorViewModel) {
                 val tabModifier = Modifier
                     .padding(5.dp)
                     .background(
-                        color = Color(0xFF19191F),
+                        color = if (isSelected) colors.tabBackgroundActive else colors.tabBackground,
                         shape = RoundedCornerShape(5.dp)
                     )
                     .then(
                         if (isSelected) {
                             Modifier.border(
                                 width = 1.dp,
-                                color = Color(0xFF353232),
+                                color = colors.tabBorderActive,
                                 shape = RoundedCornerShape(5.dp)
                             )
                         } else {
@@ -78,11 +80,11 @@ fun CodeEditorTabs(viewModel: CodeEditorViewModel) {
                             Icon(
                                 painter = painterResource(Res.drawable.file),
                                 contentDescription = null,
-                                tint = Color.Gray
+                                tint = colors.textTertiary
                             )
                             Text(
                                 text = fileName,
-                                color = Color.LightGray,
+                                color = if (isSelected) colors.tabTextActive else colors.tabText,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -95,7 +97,7 @@ fun CodeEditorTabs(viewModel: CodeEditorViewModel) {
                                     .clickable {
                                         viewModel.closeTab(tabId)
                                     },
-                                tint = Color(0xFF515151)
+                                tint = colors.textDisabled
                             )
                         }
                     },

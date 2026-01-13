@@ -17,13 +17,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wannaverse.wannacode.ERROR_RED
-import com.wannaverse.wannacode.SECONDARY_TEXT_COLOR
 import com.wannaverse.wannacode.common.Dropdown
 import com.wannaverse.wannacode.common.FolderSelector
 import com.wannaverse.wannacode.common.InputField
@@ -32,6 +29,7 @@ import com.wannaverse.wannacode.common.SecondaryButton
 import com.wannaverse.wannacode.common.SimpleCheckbox
 import com.wannaverse.wannacode.splash.BuildSystem
 import com.wannaverse.wannacode.splash.SplashPageViewModel
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 import java.util.Locale.getDefault
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
@@ -39,6 +37,7 @@ import wannacode.composeapp.generated.resources.folder
 
 @Composable
 fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
+    val colors = WannaCodeTheme.colors
     var showFolderDialog by remember { mutableStateOf(false) }
 
     if (showFolderDialog) {
@@ -56,7 +55,7 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
     Column {
         Text(
             text = "Create New Project",
-            color = SECONDARY_TEXT_COLOR,
+            color = colors.textSecondary,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp
         )
@@ -67,6 +66,7 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
             Row(horizontalArrangement = Arrangement.spacedBy(150.dp)) {
                 Text(
                     text = "Name",
+                    color = colors.textPrimary,
                     modifier = Modifier.padding(top = 10.dp)
                 )
 
@@ -77,7 +77,7 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
                         viewModel.getProjectNameError()?.let {
                             Text(
                                 text = it,
-                                color = ERROR_RED,
+                                color = colors.error,
                                 fontSize = 12.sp
                             )
                         }
@@ -89,6 +89,7 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
             Row(horizontalArrangement = Arrangement.spacedBy(130.dp)) {
                 Text(
                     text = "Location",
+                    color = colors.textPrimary,
                     modifier = Modifier.padding(top = 10.dp)
                 )
 
@@ -99,7 +100,7 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
                         if (viewModel.getLocationError() == null) {
                             Text(
                                 text = "Project will be created in this directory",
-                                color = Color(0xFF888888),
+                                color = colors.textTertiary,
                                 fontSize = 12.sp
                             )
                         }
@@ -107,7 +108,7 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
                         viewModel.getLocationError()?.let {
                             Text(
                                 text = it,
-                                color = ERROR_RED,
+                                color = colors.error,
                                 fontSize = 12.sp
                             )
                         }
@@ -117,7 +118,7 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
                         Icon(
                             painter = painterResource(Res.drawable.folder),
                             contentDescription = "Browse folder",
-                            tint = Color(0xFFB0B0B0),
+                            tint = colors.textTertiary,
                             modifier = Modifier
                                 .size(20.dp)
                                 .clickable {
@@ -130,7 +131,8 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
 
             Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
                 Text(
-                    text = "Create Git Repository"
+                    text = "Create Git Repository",
+                    color = colors.textPrimary
                 )
 
                 SimpleCheckbox(
@@ -147,14 +149,14 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
                 viewModel.getGitError()?.let {
                     Text(
                         text = it,
-                        color = ERROR_RED,
+                        color = colors.error,
                         fontSize = 12.sp
                     )
                 }
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(105.dp)) {
-                Text(text = "Java Version")
+                Text(text = "Java Version", color = colors.textPrimary)
 
                 Dropdown(
                     selectedOption = viewModel.selectedJavaVersion.value,
@@ -166,7 +168,7 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(100.dp)) {
-                Text(text = "Build System")
+                Text(text = "Build System", color = colors.textPrimary)
 
                 Dropdown(
                     selectedOption = viewModel.selectedBuildSystem.value.name.lowercase(getDefault()).replaceFirstChar { it.titlecase() },
@@ -213,7 +215,7 @@ fun CreateNewProject(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
 
             Text(
                 text = viewModel.errorMessage.value,
-                color = ERROR_RED,
+                color = colors.error,
                 fontSize = 12.sp
             )
         }

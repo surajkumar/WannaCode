@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wannaverse.wannacode.common.DirectoryContextMenu
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 import java.io.File
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
@@ -43,6 +44,7 @@ import wannacode.composeapp.generated.resources.right_cheveron
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contextMenuFile: File?, onContextMenuFileChanged: (File?) -> Unit = {}, refreshKey: Int) {
+    val colors = WannaCodeTheme.colors
     var expanded by remember { mutableStateOf(indent == 0) }
     var clickOffset by remember { mutableStateOf(DpOffset.Zero) }
     val density = androidx.compose.ui.platform.LocalDensity.current
@@ -51,12 +53,12 @@ fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, c
         TooltipArea(
             tooltip = {
                 Surface(
-                    color = Color(0xFF2B2B2B),
+                    color = colors.tooltipBackground,
                     shape = RoundedCornerShape(4.dp)
                 ) {
                     Text(
                         text = file.name,
-                        color = Color.White,
+                        color = colors.tooltipText,
                         fontSize = 12.sp,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
@@ -92,7 +94,7 @@ fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, c
                         painterResource(Res.drawable.down_cheveron)
                     else painterResource(Res.drawable.right_cheveron),
                     contentDescription = if (expanded) "Collapse" else "Expand",
-                    tint = Color.White,
+                    tint = colors.explorerChevron,
                     modifier = Modifier.size(10.dp)
                 )
 
@@ -101,7 +103,7 @@ fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, c
                 Icon(
                     painter = painterResource(Res.drawable.folder),
                     contentDescription = null,
-                    tint = Color.DarkGray,
+                    tint = colors.explorerIcon,
                     modifier = Modifier.size(20.dp)
                 )
 
@@ -110,7 +112,8 @@ fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, c
                 Text(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    text = file.name
+                    text = file.name,
+                    color = colors.explorerText
                 )
 
                 DirectoryContextMenu(file, contextMenuFile, clickOffset) { onContextMenuFileChanged(null) }

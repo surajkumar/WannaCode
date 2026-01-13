@@ -26,8 +26,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
-import com.wannaverse.wannacode.ERROR_RED
 import com.wannaverse.wannacode.ide.editor.viewmodel.DiagnosticLineInfo
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 
 @Composable
 fun LineRenderer(
@@ -39,6 +39,7 @@ fun LineRenderer(
     textStyle: TextStyle,
     modifier: Modifier = Modifier
 ) {
+    val colors = WannaCodeTheme.colors
     val density = LocalDensity.current
     val lineHeightDp = with(density) { state.lineHeightPx.toDp() }
 
@@ -53,7 +54,8 @@ fun LineRenderer(
                         lineIndex = lineIndex,
                         lineLength = lineContent.length,
                         charWidth = state.charWidthPx,
-                        lineHeight = state.lineHeightPx
+                        lineHeight = state.lineHeightPx,
+                        selectionColor = colors.editorSelection
                     )
                 }
 
@@ -61,7 +63,8 @@ fun LineRenderer(
                     diagnostics = diagnostics,
                     charWidth = state.charWidthPx,
                     lineHeight = state.lineHeightPx,
-                    lineLength = lineContent.length
+                    lineLength = lineContent.length,
+                    errorColor = colors.diagnosticError
                 )
             }
     ) {
@@ -77,7 +80,8 @@ fun LineRenderer(
             CursorIndicator(
                 column = state.cursor.column,
                 charWidth = state.charWidthPx,
-                lineHeight = state.lineHeightPx
+                lineHeight = state.lineHeightPx,
+                cursorColor = colors.editorCursor
             )
         }
     }
@@ -87,7 +91,8 @@ fun LineRenderer(
 private fun CursorIndicator(
     column: Int,
     charWidth: Float,
-    lineHeight: Float
+    lineHeight: Float,
+    cursorColor: Color
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "cursor_blink")
     val alpha by infiniteTransition.animateFloat(
@@ -103,7 +108,7 @@ private fun CursorIndicator(
     Canvas(modifier = Modifier.fillMaxSize()) {
         val x = column * charWidth
         drawLine(
-            color = Color.White.copy(alpha = alpha),
+            color = cursorColor.copy(alpha = alpha),
             start = Offset(x, 2f),
             end = Offset(x, lineHeight - 2f),
             strokeWidth = 2f
@@ -144,7 +149,8 @@ private fun DrawScope.drawDiagnosticUnderlines(
     diagnostics: List<DiagnosticLineInfo>,
     charWidth: Float,
     lineHeight: Float,
-    lineLength: Int
+    lineLength: Int,
+    errorColor: Color
 ) {
     diagnostics.forEach { diagnostic ->
         val start = diagnostic.startChar.coerceIn(0, lineLength)
@@ -159,7 +165,7 @@ private fun DrawScope.drawDiagnosticUnderlines(
                 startX = startX,
                 endX = endX,
                 y = y,
-                color = ERROR_RED,
+                color = errorColor,
                 waveLength = 4f,
                 waveAmplitude = 2f
             )

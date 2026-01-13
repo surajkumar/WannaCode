@@ -25,20 +25,19 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.wannaverse.wannacode.SCROLL_BAR_IDLE_ACTIVE
-import com.wannaverse.wannacode.SCROLL_BAR_IDLE_COLOR
-import com.wannaverse.wannacode.STROKE_COLOR
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import com.wannaverse.wannacode.ide.explorer.components.FileTreeView
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 import java.awt.Cursor
 import java.io.File
 
 @Composable
 fun FileExplorer(directory: File, viewModel: CodeEditorViewModel) {
+    val colors = WannaCodeTheme.colors
     var sidebarWidth by remember { mutableStateOf(350.dp) }
     val scrollState = rememberScrollState()
 
-    Box(Modifier.width(sidebarWidth).padding(start = 20.dp, top = 10.dp)) {
+    Box(Modifier.width(sidebarWidth).padding(start = 20.dp, top = 10.dp).background(colors.explorerBackground)) {
         Row {
             Column(
                 Modifier
@@ -53,8 +52,8 @@ fun FileExplorer(directory: File, viewModel: CodeEditorViewModel) {
                 adapter = rememberScrollbarAdapter(scrollState),
                 modifier = Modifier.width(8.dp),
                 style = LocalScrollbarStyle.current.copy(
-                    unhoverColor = SCROLL_BAR_IDLE_COLOR,
-                    hoverColor = SCROLL_BAR_IDLE_ACTIVE,
+                    unhoverColor = colors.scrollbarThumb,
+                    hoverColor = colors.scrollbarThumbHover,
                     minimalHeight = 24.dp
                 )
             )
@@ -82,10 +81,11 @@ fun FileExplorer(directory: File, viewModel: CodeEditorViewModel) {
 
 @Composable
 fun Divider() {
+    val colors = WannaCodeTheme.colors
     Box(
         Modifier
             .width(1.dp)
             .fillMaxHeight()
-            .background(STROKE_COLOR)
+            .background(colors.border)
     ) {}
 }

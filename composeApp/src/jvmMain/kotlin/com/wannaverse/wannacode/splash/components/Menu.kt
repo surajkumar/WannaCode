@@ -16,15 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
-import com.wannaverse.wannacode.ACTIVE_TEXT_COLOR
-import com.wannaverse.wannacode.PRIMARY_TEXT_COLOR
-import com.wannaverse.wannacode.STROKE_COLOR
 import com.wannaverse.wannacode.common.FolderSelector
 import com.wannaverse.wannacode.splash.SplashPageOption
 import com.wannaverse.wannacode.splash.SplashPageViewModel
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 
 @Composable
 fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
+    val colors = WannaCodeTheme.colors
     var showOpenProject by remember { mutableStateOf(false) }
 
     if (showOpenProject) {
@@ -51,9 +50,9 @@ fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
                         val strokeWidth = 1.dp.toPx()
                         val x = size.width - strokeWidth / 2
                         drawLine(
-                            color = STROKE_COLOR,
+                            color = colors.border,
                             start = Offset(x, 0f),
-                            end = androidx.compose.ui.geometry.Offset(x, size.height),
+                            end = Offset(x, size.height),
                             strokeWidth = strokeWidth
                         )
                     }
@@ -63,7 +62,7 @@ fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
             ) {
                 Text(
                     text = "Recent",
-                    color = if (viewModel.activeScreen == SplashPageOption.RECENT) ACTIVE_TEXT_COLOR else PRIMARY_TEXT_COLOR,
+                    color = if (viewModel.activeScreen == SplashPageOption.RECENT) colors.accent else colors.textPrimary,
                     modifier = Modifier.clickable(onClick = {
                         viewModel.activeScreen = SplashPageOption.RECENT
                     })
@@ -71,7 +70,7 @@ fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
 
                 Text(
                     text = "Create New Project",
-                    color = if (viewModel.activeScreen == SplashPageOption.CREATE) ACTIVE_TEXT_COLOR else PRIMARY_TEXT_COLOR,
+                    color = if (viewModel.activeScreen == SplashPageOption.CREATE) colors.accent else colors.textPrimary,
                     modifier = Modifier.clickable(onClick = {
                         viewModel.activeScreen = SplashPageOption.CREATE
                     })
@@ -79,7 +78,7 @@ fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
 
                 Text(
                     text = "Open",
-                    color = if (viewModel.activeScreen == SplashPageOption.OPEN) ACTIVE_TEXT_COLOR else PRIMARY_TEXT_COLOR,
+                    color = if (viewModel.activeScreen == SplashPageOption.OPEN) colors.accent else colors.textPrimary,
                     modifier = Modifier.clickable(onClick = {
                         showOpenProject = true
                     })
@@ -87,7 +86,7 @@ fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
 
                 Text(
                     text = "Clone Repository",
-                    color = if (viewModel.activeScreen == SplashPageOption.CLONE_REPOSITORY) ACTIVE_TEXT_COLOR else PRIMARY_TEXT_COLOR,
+                    color = if (viewModel.activeScreen == SplashPageOption.CLONE_REPOSITORY) colors.accent else colors.textPrimary,
                     modifier = Modifier.clickable(onClick = {
                         viewModel.activeScreen = SplashPageOption.CLONE_REPOSITORY
                     })
@@ -95,7 +94,7 @@ fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
 
                 Text(
                     text = "Settings",
-                    color = if (viewModel.activeScreen == SplashPageOption.SETTINGS) ACTIVE_TEXT_COLOR else PRIMARY_TEXT_COLOR,
+                    color = if (viewModel.activeScreen == SplashPageOption.SETTINGS) colors.accent else colors.textPrimary,
                     modifier = Modifier.clickable(onClick = {
                         viewModel.activeScreen = SplashPageOption.SETTINGS
                     })
@@ -103,7 +102,7 @@ fun Menu(viewModel: SplashPageViewModel, hideSplash: () -> Unit) {
 
                 Text(
                     text = "Exit",
-                    color = PRIMARY_TEXT_COLOR,
+                    color = colors.textPrimary,
                     modifier = Modifier.clickable(onClick = {
                         viewModel.closeProgram()
                     })

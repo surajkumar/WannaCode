@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wannaverse.wannacode.common.FileContextMenu
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
+import com.wannaverse.wannacode.theme.WannaCodeTheme
 import java.io.File
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
@@ -43,18 +44,19 @@ import wannacode.composeapp.generated.resources.file
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contextMenuFile: File?, onContextMenuFileChanged: (File?) -> Unit = {}) {
+    val colors = WannaCodeTheme.colors
     var clickOffset by remember { mutableStateOf(DpOffset.Zero) }
     val density = androidx.compose.ui.platform.LocalDensity.current
 
     TooltipArea(
         tooltip = {
             Surface(
-                color = Color(0xFF2B2B2B),
+                color = colors.tooltipBackground,
                 shape = RoundedCornerShape(4.dp)
             ) {
                 Text(
                     text = file.name,
-                    color = Color.White,
+                    color = colors.tooltipText,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 )
@@ -100,7 +102,7 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
                 ) {
                     Text(
                         text = badge.letter,
-                        color = Color.White,
+                        color = colors.textPrimary,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 12.sp
@@ -110,7 +112,7 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
                 Icon(
                     painter = painterResource(Res.drawable.file),
                     contentDescription = null,
-                    tint = Color.Gray,
+                    tint = colors.explorerIcon,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -120,7 +122,8 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
             Text(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                text = file.name
+                text = file.name,
+                color = colors.explorerText
             )
 
             FileContextMenu(file, contextMenuFile, clickOffset) { onContextMenuFileChanged(null) }
