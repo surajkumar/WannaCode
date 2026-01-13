@@ -40,7 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wannaverse.wannacode.ide.editor.syntax.loadSyntaxMap
 import com.wannaverse.wannacode.ide.editor.viewmodel.DiagnosticLineInfo
+import com.wannaverse.wannacode.ide.editor.viewmodel.FixArgument
 import com.wannaverse.wannacode.theme.WannaCodeTheme
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun VirtualizedCodeEditor(
@@ -49,12 +53,18 @@ fun VirtualizedCodeEditor(
     diagnostics: List<DiagnosticLineInfo>,
     modifier: Modifier = Modifier,
     fontSize: Float = 14f,
-    onTextChange: (String) -> Unit
+    onTextChange: (String) -> Unit,
+    onApplyFix: ((FixArgument) -> Unit)? = null
 ) {
     val colors = WannaCodeTheme.colors
     val density = LocalDensity.current
     val textMeasurer = rememberTextMeasurer()
     val focusRequester = remember(state) { FocusRequester() }
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
+
+    var hoverInfo by remember { mutableStateOf<HoverInfo?>(null) }
+    var hoverJob by remember { mutableStateOf<Job?>(null) }
+    val hoverDelayMs = 300L
 
     val textStyle = remember(fontSize, colors.textPrimary) {
         TextStyle(
@@ -215,7 +225,7 @@ fun VirtualizedCodeEditor(
                                             }
                                             3 -> {
                                                 state.selectLine(pos.line)
-                                                clickCount = 0 // Reset after triple
+                                                clickCount = 0
                                             }
                                         }
 
@@ -265,7 +275,21 @@ fun VirtualizedCodeEditor(
                             state = state,
                             highlightedText = highlightedText,
                             diagnostics = diagnosticsByLine[lineIndex] ?: emptyList(),
-                            textStyle = textStyle
+                            textStyle = textStyle,
+                            onDiagnosticHover = { diagnostic, x, y ->
+                                hoverJob?.cancel()
+                                if (diagnostic != null) {
+                                    hoverJob = coroutineScope.launch {
+                                        delay(hoverDelayMs)
+                                        hoverInfo = HoverInfo(diagnostic, x, y)
+                                    }
+                                } else {
+                                    hoverJob = coroutineScope.launch {
+                                        delay(100L)
+                                        hoverInfo = null
+                                    }
+                                }
+                            }
                         )
                     }
                 }
@@ -282,5 +306,17 @@ fun VirtualizedCodeEditor(
         LaunchedEffect(state) {
             focusRequester.requestFocus()
         }
+
+        DiagnosticHoverPopup(
+            hoverInfo = hoverInfo,
+            onDismiss = {
+                hoverJob?.cancel()
+                hoverInfo = null
+            },
+            onApplyFix = { fix ->
+                onApplyFix?.invoke(fix)
+                hoverInfo = null
+            }
+        )
     }
 }

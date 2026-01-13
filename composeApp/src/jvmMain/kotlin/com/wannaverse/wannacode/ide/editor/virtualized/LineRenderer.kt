@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -22,6 +25,10 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -37,16 +44,55 @@ fun LineRenderer(
     highlightedText: AnnotatedString,
     diagnostics: List<DiagnosticLineInfo>,
     textStyle: TextStyle,
+    onDiagnosticHover: ((DiagnosticLineInfo?, Float, Float) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val colors = WannaCodeTheme.colors
     val density = LocalDensity.current
     val lineHeightDp = with(density) { state.lineHeightPx.toDp() }
+    var linePositionInWindow by remember { mutableStateOf(Offset.Zero) }
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(lineHeightDp)
+            .onGloballyPositioned { coordinates ->
+                linePositionInWindow = coordinates.positionInWindow()
+            }
+            .pointerInput(diagnostics, state.charWidthPx) {
+                awaitPointerEventScope {
+                    while (true) {
+                        val event = awaitPointerEvent()
+                        when (event.type) {
+                            PointerEventType.Move -> {
+                                if (diagnostics.isNotEmpty() && onDiagnosticHover != null) {
+                                    val position = event.changes.firstOrNull()?.position
+                                    if (position != null) {
+                                        val charWidth = state.charWidthPx.takeIf { it > 0f } ?: 8f
+                                        val column = (position.x / charWidth).toInt()
+
+                                        val hoveredDiagnostic = diagnostics.find { diag ->
+                                            column >= diag.startChar && column < diag.endChar
+                                        }
+
+                                        if (hoveredDiagnostic != null) {
+                                            val popupX = linePositionInWindow.x + (hoveredDiagnostic.startChar * charWidth)
+                                            val popupY = linePositionInWindow.y + state.lineHeightPx
+                                            onDiagnosticHover(hoveredDiagnostic, popupX, popupY)
+                                        } else {
+                                            onDiagnosticHover(null, 0f, 0f)
+                                        }
+                                    }
+                                }
+                            }
+                            PointerEventType.Exit -> {
+                                onDiagnosticHover?.invoke(null, 0f, 0f)
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+            }
             .drawBehind {
                 state.selection?.let { selection ->
                     drawSelectionForLine(

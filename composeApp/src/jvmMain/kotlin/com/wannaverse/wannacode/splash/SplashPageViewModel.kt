@@ -249,9 +249,19 @@ class SplashPageViewModel : ViewModel() {
             println("Gradle has been extracted into directory " + tempExtractedZip.absolutePath)
             println("Running gradle wrapper command")
 
+            val gradleScript = if (isWindows()) {
+                tempExtractedZip.absolutePath + "/gradle-$gradleVersion/bin/gradle.bat"
+            } else {
+                val script = File(tempExtractedZip.absolutePath + "/gradle-$gradleVersion/bin/gradle")
+                script.setExecutable(true)
+                script.absolutePath
+            }
+
+            println("Running command: $gradleScript init ...")
+
             executeCommand(
                 listOf(
-                    tempExtractedZip.absolutePath + "/gradle-$gradleVersion/bin/gradle.bat",
+                    gradleScript,
                     "init",
                     "--comments",
                     "--dsl", selectedGradleDsl.value.name.lowercase(),
@@ -268,9 +278,17 @@ class SplashPageViewModel : ViewModel() {
                 projectDir
             )
 
+            val gradlewScript = if (isWindows()) {
+                "gradlew.bat"
+            } else {
+                val script = File(projectDir, "gradlew")
+                script.setExecutable(true)
+                "./gradlew"
+            }
+
             executeCommand(
                 listOf(
-                    "gradlew.bat",
+                    gradlewScript,
                     "build"
                 ),
                 projectDir

@@ -58,6 +58,9 @@ fun CodeEditor(viewModel: CodeEditorViewModel) {
                 onTextChange = { newText ->
                     viewModel.syncEditorState(currentTabId)
                 },
+                onApplyFix = { fixArg ->
+                    viewModel.applyFixArgument(fixArg)
+                },
                 modifier = Modifier.fillMaxSize()
             )
         }

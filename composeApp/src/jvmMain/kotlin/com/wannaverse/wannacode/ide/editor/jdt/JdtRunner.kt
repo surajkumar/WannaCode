@@ -28,14 +28,72 @@ var process: Process? = null
 
 var workspaceFile: File? = null
 
+private enum class Platform {
+    WINDOWS,
+    LINUX,
+    MAC
+}
+
+private fun detectPlatform(): Platform {
+    val osName = System.getProperty("os.name").lowercase()
+    return when {
+        osName.contains("win") -> Platform.WINDOWS
+        osName.contains("mac") || osName.contains("darwin") -> Platform.MAC
+        else -> Platform.LINUX
+    }
+}
+
+private fun getJavaHome(): String {
+    System.getenv("JAVA_HOME")?.let { return it }
+
+    val javaHome = System.getProperty("java.home")
+    val javaHomeFile = File(javaHome)
+    return if (javaHomeFile.name == "jre" && javaHomeFile.parentFile?.resolve("bin/javac")?.exists() == true) {
+        javaHomeFile.parentFile.absolutePath
+    } else {
+        javaHome
+    }
+}
+
 fun launchJdtServer(workspace: File?) {
     workspaceFile = workspace
 
-    val eclipseJdrDirectory: File = File("../eclipse-jdt").absoluteFile
-    val configDir = eclipseJdrDirectory.resolve("config_win")
-    val launcherScript = eclipseJdrDirectory.resolve("bin/jdtls.bat")
+    val platform = detectPlatform()
+    val eclipseJdtDirectory: File = File("../eclipse-jdt").absoluteFile
 
-    process = ProcessBuilder(
+    if (!eclipseJdtDirectory.exists()) {
+        println("Eclipse JDT directory not found at: ${eclipseJdtDirectory.absolutePath}")
+        println("Please download and extract eclipse.jdt.ls to the eclipse-jdt directory")
+        return
+    }
+
+    val configDirName = when (platform) {
+        Platform.WINDOWS -> "config_win"
+        Platform.MAC -> "config_mac"
+        Platform.LINUX -> "config_linux"
+    }
+
+    val scriptName = when (platform) {
+        Platform.WINDOWS -> "bin/jdtls.bat"
+        else -> "bin/jdtls"
+    }
+
+    val configDir = eclipseJdtDirectory.resolve(configDirName)
+    val launcherScript = eclipseJdtDirectory.resolve(scriptName)
+
+    if (!launcherScript.exists()) {
+        println("JDT launcher script not found at: ${launcherScript.absolutePath}")
+        return
+    }
+
+    if (platform != Platform.WINDOWS) {
+        launcherScript.setExecutable(true)
+    }
+
+    val javaHome = getJavaHome()
+    println("Using JAVA_HOME: $javaHome")
+
+    val processBuilder = ProcessBuilder(
         launcherScript.absolutePath,
         "-configuration",
         configDir.absolutePath,
@@ -43,7 +101,10 @@ fun launchJdtServer(workspace: File?) {
         workspace?.absolutePath
     )
         .redirectError(ProcessBuilder.Redirect.PIPE)
-        .start()
+
+    processBuilder.environment()["JAVA_HOME"] = javaHome
+
+    process = processBuilder.start()
 
     val client = JavaClient()
     launcher = LSPLauncher.createClientLauncher(client, process?.inputStream, process?.outputStream)
@@ -91,14 +152,25 @@ fun getDiagnostics(code: String, fileLocation: String) {
     )
 }
 
-data class Wrapper(val diagnostics: List<Diagnostic>, val fixes: MutableList<Either<Command, CodeAction>>)
+data class Wrapper(
+    val diagnostics: List<Diagnostic>,
+    val fixes: MutableList<Either<Command, CodeAction>> = mutableListOf()
+)
 
 val quickFixes: SnapshotStateMap<String, Wrapper> = mutableStateMapOf()
 
+var onDiagnosticsUpdated: ((String) -> Unit)? = null
+
 fun getQuickFixForDiagnostics(fileLocation: String, diagnostics: List<Diagnostic>?) {
+    if (diagnostics.isNullOrEmpty()) return
+
+    quickFixes[fileLocation] = Wrapper(diagnostics = diagnostics)
+
+    onDiagnosticsUpdated?.invoke(fileLocation)
+
     val server = launcher?.remoteProxy
 
-    diagnostics?.forEach { diagnostic ->
+    diagnostics.forEach { diagnostic ->
         val context = CodeActionContext(listOf(diagnostic))
 
         server?.textDocumentService?.codeAction(
@@ -109,13 +181,13 @@ fun getQuickFixForDiagnostics(fileLocation: String, diagnostics: List<Diagnostic
             )
         )?.thenAccept { actions ->
             if (!actions.isNullOrEmpty()) {
-//                actions.forEach { action ->
-//                    println(action.left.title)
-//                }
-                quickFixes[fileLocation] = Wrapper(
-                    diagnostics = diagnostics,
-                    fixes = actions
-                )
+                val existing = quickFixes[fileLocation]
+                if (existing != null) {
+                    quickFixes[fileLocation] = existing.copy(
+                        fixes = (existing.fixes + actions).toMutableList()
+                    )
+                    onDiagnosticsUpdated?.invoke(fileLocation)
+                }
             }
         }?.exceptionally { _ ->
             null

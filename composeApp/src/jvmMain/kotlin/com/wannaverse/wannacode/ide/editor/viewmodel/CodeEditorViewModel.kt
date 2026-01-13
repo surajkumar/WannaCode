@@ -14,6 +14,7 @@ import com.google.gson.JsonObject
 import com.wannaverse.wannacode.ide.editor.jdt.applyQuickFix
 import com.wannaverse.wannacode.ide.editor.jdt.getDiagnostics
 import com.wannaverse.wannacode.ide.editor.jdt.launchJdtServer
+import com.wannaverse.wannacode.ide.editor.jdt.onDiagnosticsUpdated
 import com.wannaverse.wannacode.ide.editor.jdt.quickFixes
 import com.wannaverse.wannacode.ide.editor.virtualized.VirtualizedEditorState
 import java.io.File
@@ -52,6 +53,20 @@ class CodeEditorViewModel : ViewModel() {
 
     private val editorStates = mutableStateMapOf<Int, VirtualizedEditorState>()
 
+    init {
+        onDiagnosticsUpdated = { fileUri ->
+            val matchingTab = _tabContents.values.find { tab ->
+                val tabUri = "file:///" + tab.file.absolutePath.replace("\\", "/")
+                tabUri == fileUri || "file://" + tab.file.absolutePath.replace("\\", "/") == fileUri
+            }
+            matchingTab?.let { tab ->
+                viewModelScope.launch(Dispatchers.Main) {
+                    populateQuickFixesByLine(tab.id, fileUri)
+                }
+            }
+        }
+    }
+
     fun addLog(msg: String, tabId: Int = currentTab.value) {
         val state = tabLogs.getOrPut(tabId) { mutableStateOf(emptyList()) }
         state.value += msg
@@ -73,10 +88,6 @@ class CodeEditorViewModel : ViewModel() {
 
     fun loadDiagnostics(tab: TabContent) = viewModelScope.launch {
         getDiagnostics(tab.file, tab.text)
-        populateQuickFixesByLine(
-            tabId = tab.id,
-            file = "file:///" + tab.file.absolutePath.replace("\\", "/")
-        )
     }
 
     fun getDiagnostics(file: File, content: String) = getDiagnostics(
@@ -119,6 +130,25 @@ class CodeEditorViewModel : ViewModel() {
                 applyQuickFix(command)
             }
         }
+    }
+
+    fun applyFixArgument(fixArg: FixArgument) {
+        val tabId = currentTab.value
+        val tab = _tabContents[tabId] ?: return
+        val fileUri = "file://" + tab.file.absolutePath.replace("\\", "/")
+        val changes = fixArg.changes[fileUri]
+            ?: fixArg.changes["file:///" + tab.file.absolutePath.replace("\\", "/")]
+            ?: fixArg.changes.values.firstOrNull()
+            ?: return
+
+        changes.sortedByDescending { it.range.start.line * 10000 + it.range.start.character }
+            .forEach { change ->
+                applyFix(change)
+            }
+
+        loadDiagnostics(tab)
+
+        clearEditorState(tabId)
     }
 
     fun applyWorkspaceEdit(edit: WorkspaceEdit) {
