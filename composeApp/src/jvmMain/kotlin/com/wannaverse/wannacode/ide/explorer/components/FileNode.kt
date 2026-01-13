@@ -18,6 +18,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +43,9 @@ import wannacode.composeapp.generated.resources.file
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contextMenuFile: File?, onContextMenuFileChanged: (File?) -> Unit = {}) {
+    var clickOffset by remember { mutableStateOf(DpOffset.Zero) }
+    val density = androidx.compose.ui.platform.LocalDensity.current
+
     TooltipArea(
         tooltip = {
             Surface(
@@ -67,6 +74,10 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
                             if (event.type == PointerEventType.Press &&
                                 event.buttons.isSecondaryPressed
                             ) {
+                                val position = event.changes.first().position
+                                clickOffset = with(density) {
+                                    DpOffset(position.x.toDp(), position.y.toDp())
+                                }
                                 onContextMenuFileChanged(file)
                             }
                         }
@@ -111,8 +122,8 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
                 overflow = TextOverflow.Ellipsis,
                 text = file.name
             )
-        }
 
-        FileContextMenu(file, contextMenuFile) { onContextMenuFileChanged(null) }
+            FileContextMenu(file, contextMenuFile, clickOffset) { onContextMenuFileChanged(null) }
+        }
     }
 }

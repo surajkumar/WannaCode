@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.io.File
@@ -17,11 +18,13 @@ import java.io.File
 fun DirectoryContextMenu(
     file: File,
     contextMenuFile: File?,
+    offset: DpOffset = DpOffset.Zero,
     onDismiss: () -> Unit
 ) {
     DropdownMenu(
         expanded = contextMenuFile == file,
         onDismissRequest = onDismiss,
+        offset = offset,
         modifier = Modifier
             .background(Color(0xFF111114), shape = RoundedCornerShape(5.dp))
             .border(1.dp, Color(0xFF252525), RoundedCornerShape(5.dp))
@@ -47,11 +50,13 @@ fun DirectoryContextMenu(
 fun FileContextMenu(
     file: File,
     contextMenuFile: File?,
+    offset: DpOffset = DpOffset.Zero,
     onDismiss: () -> Unit
 ) {
     DropdownMenu(
         expanded = contextMenuFile == file,
         onDismissRequest = onDismiss,
+        offset = offset,
         modifier = Modifier
             .background(Color(0xFF111114), shape = RoundedCornerShape(5.dp))
             .border(1.dp, Color(0xFF252525), RoundedCornerShape(5.dp))

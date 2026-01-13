@@ -44,6 +44,8 @@ import wannacode.composeapp.generated.resources.right_cheveron
 @Composable
 fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contextMenuFile: File?, onContextMenuFileChanged: (File?) -> Unit = {}, refreshKey: Int) {
     var expanded by remember { mutableStateOf(indent == 0) }
+    var clickOffset by remember { mutableStateOf(DpOffset.Zero) }
+    val density = androidx.compose.ui.platform.LocalDensity.current
 
     Column(modifier = Modifier.padding(start = (indent * 8).dp)) {
         TooltipArea(
@@ -73,6 +75,10 @@ fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, c
                                 if (event.type == PointerEventType.Press &&
                                     event.buttons.isSecondaryPressed
                                 ) {
+                                    val position = event.changes.first().position
+                                    clickOffset = with(density) {
+                                        DpOffset(position.x.toDp(), position.y.toDp())
+                                    }
                                     onContextMenuFileChanged(file)
                                 }
                             }
@@ -106,10 +112,10 @@ fun DirectoryNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, c
                     overflow = TextOverflow.Ellipsis,
                     text = file.name
                 )
+
+                DirectoryContextMenu(file, contextMenuFile, clickOffset) { onContextMenuFileChanged(null) }
             }
         }
-
-        DirectoryContextMenu(file, contextMenuFile) { onContextMenuFileChanged(null) }
 
         if (expanded) {
             file.listFiles()?.sortedBy { !it.isDirectory }?.forEach {
