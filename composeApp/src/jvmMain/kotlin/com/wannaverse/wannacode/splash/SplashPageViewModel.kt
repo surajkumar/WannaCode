@@ -34,6 +34,11 @@ class SplashPageViewModel : ViewModel() {
     val gradleDistributions = mutableStateOf(listOf("9.1.0", "9.0.0", "8.14.3", "7.6.6"))
     var selectedDistribution = mutableStateOf(gradleDistributions.value.first())
 
+    val mavenDistributions = mutableStateOf(listOf("3.9.9", "3.9.8", "3.9.7", "3.8.8", "3.6.3"))
+    var selectedMavenDistribution = mutableStateOf(mavenDistributions.value.first())
+    val mavenPackagingOptions = listOf("jar", "war", "pom")
+    var selectedMavenPackaging = mutableStateOf("jar")
+
     var groupId = mutableStateOf("com.example")
     var artifactId = mutableStateOf(projectName.value)
     var isError = mutableStateOf(false)
@@ -57,6 +62,25 @@ class SplashPageViewModel : ViewModel() {
             // Handle errors gracefully
             println("Failed to fetch Gradle versions: ${e.message}")
             gradleDistributions.value = emptyList()
+        }
+    }
+
+    fun fetchMavenVersions() = viewModelScope.launch {
+        try {
+            val url = URL("https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/maven-metadata.xml")
+            val response = url.readText()
+            val versionPattern = "<version>([0-9]+\\.[0-9]+\\.[0-9]+)</version>".toRegex()
+            val versions = versionPattern.findAll(response)
+                .map { it.groupValues[1] }
+                .toList()
+                .reversed() // Most recent first
+
+            if (versions.isNotEmpty()) {
+                mavenDistributions.value = versions
+                selectedMavenDistribution.value = versions.first()
+            }
+        } catch (e: Exception) {
+            println("Failed to fetch Maven versions: ${e.message}")
         }
     }
 
@@ -129,32 +153,36 @@ class SplashPageViewModel : ViewModel() {
         }
     }
 
-    private fun createMavenProject(projectDir: File) = viewModelScope.launch {
-        val mvnCmd = when (selectedBuildSystemInstallation.value) {
-            BuildSystemInstallation.WRAPPER -> "./mvnw"
-            BuildSystemInstallation.LOCAL -> "mvn"
+    private fun createMavenProject(projectDir: File) {
+        when (selectedBuildSystemInstallation.value) {
+            BuildSystemInstallation.WRAPPER -> {
+                setupMavenWrapper(projectDir, selectedMavenDistribution.value)
+            }
+            BuildSystemInstallation.LOCAL -> {
+                val mvnCmd = if (isWindows()) {
+                    "${buildToolInstallationPath.value}/bin/mvn.cmd"
+                } else {
+                    "${buildToolInstallationPath.value}/bin/mvn"
+                }
+                runMavenArchetype(mvnCmd, projectDir)
+            }
         }
-
-        val cmd = listOf(
-            mvnCmd,
-            "archetype:generate",
-            "-DgroupId=${groupId.value}",
-            "-DartifactId=${artifactId.value}",
-            "-DarchetypeArtifactId=maven-archetype-quickstart",
-            "-DinteractiveMode=false"
-        )
-
-        executeCommand(cmd, projectDir)
     }
 
-    private fun executeCommand(cmd: List<String>, workingDir: File) {
+    private fun executeCommand(cmd: List<String>, workingDir: File, extraEnv: Map<String, String> = emptyMap()) {
         try {
             println("Running command: ${cmd.joinToString(" ")}")
 
-            val process = ProcessBuilder(cmd)
+            val processBuilder = ProcessBuilder(cmd)
                 .directory(workingDir)
                 .redirectErrorStream(false)
-                .start()
+
+            // Add extra environment variables
+            if (extraEnv.isNotEmpty()) {
+                processBuilder.environment().putAll(extraEnv)
+            }
+
+            val process = processBuilder.start()
 
             val stdout = Thread {
                 process.inputStream.bufferedReader().use { reader ->
@@ -254,6 +282,117 @@ class SplashPageViewModel : ViewModel() {
             withContext(Dispatchers.Main) {
                 errorMessage.value = "Failed to setup Gradle wrapper: ${e.message}"
             }
+        }
+    }
+
+    fun setupMavenWrapper(projectDir: File, mavenVersion: String) = viewModelScope.launch {
+        try {
+            val mavenZipUrl = "https://archive.apache.org/dist/maven/maven-3/$mavenVersion/binaries/apache-maven-$mavenVersion-bin.zip"
+            val tempZipDownload = File.createTempFile("apache-maven-$mavenVersion-bin-", ".zip")
+            val tempExtractedZip = Files.createTempDirectory("maven-$mavenVersion-").toFile()
+
+            println("Downloading Maven $mavenVersion from $mavenZipUrl")
+
+            URI(mavenZipUrl).toURL().openStream().use { input ->
+                tempZipDownload.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            println("Maven distribution has been downloaded " + tempZipDownload.absolutePath)
+            println("Extracting " + tempZipDownload.absolutePath)
+
+            ZipFile(tempZipDownload).use { zip ->
+                zip.entries().asSequence().forEach { entry ->
+                    val outFile = File(tempExtractedZip, entry.name)
+                    if (entry.isDirectory) {
+                        outFile.mkdirs()
+                    } else {
+                        outFile.parentFile.mkdirs()
+                        zip.getInputStream(entry).use { input ->
+                            outFile.outputStream().use { output ->
+                                input.copyTo(output)
+                            }
+                        }
+                    }
+                }
+            }
+
+            println("Maven has been extracted into directory " + tempExtractedZip.absolutePath)
+
+            val mvnCmd = if (isWindows()) {
+                tempExtractedZip.absolutePath + "/apache-maven-$mavenVersion/bin/mvn.cmd"
+            } else {
+                tempExtractedZip.absolutePath + "/apache-maven-$mavenVersion/bin/mvn"
+            }
+
+            if (!isWindows()) {
+                File(mvnCmd).setExecutable(true)
+            }
+
+            runMavenArchetype(mvnCmd, projectDir)
+
+            println("Running Maven package")
+            val artifactDir = File(projectDir, artifactId.value)
+            val mvnBuildCmd = if (isWindows()) "mvnw.cmd" else "./mvnw"
+            val javaHome = getJavaHome()
+
+            val wrapperExists = File(artifactDir, if (isWindows()) "mvnw.cmd" else "mvnw").exists()
+            if (wrapperExists) {
+                executeCommand(listOf(mvnBuildCmd, "package", "-DskipTests"), artifactDir, mapOf("JAVA_HOME" to javaHome))
+            } else {
+                executeCommand(listOf(mvnCmd, "package", "-DskipTests"), artifactDir, mapOf("JAVA_HOME" to javaHome))
+            }
+
+            withContext(Dispatchers.Main) {
+                this@SplashPageViewModel.projectDir.value = artifactDir
+            }
+
+            // tempZipDownload.deleteRecursively()
+            // tempExtractedZip.deleteRecursively()
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                errorMessage.value = "Failed to setup Maven project: ${e.message}"
+            }
+            throw e
+        }
+    }
+
+    private fun runMavenArchetype(mvnCmd: String, projectDir: File) {
+        println("Running Maven archetype:generate")
+
+        val javaHome = getJavaHome()
+        println("Using JAVA_HOME: $javaHome")
+
+        executeCommand(
+            listOf(
+                mvnCmd,
+                "archetype:generate",
+                "-DgroupId=${groupId.value}",
+                "-DartifactId=${artifactId.value}",
+                "-Dpackage=${groupId.value}",
+                "-Dversion=1.0-SNAPSHOT",
+                "-DarchetypeGroupId=org.apache.maven.archetypes",
+                "-DarchetypeArtifactId=maven-archetype-quickstart",
+                "-DarchetypeVersion=1.5",
+                "-DinteractiveMode=false"
+            ),
+            projectDir,
+            mapOf("JAVA_HOME" to javaHome)
+        )
+
+        println("Maven project created successfully")
+    }
+
+    private fun getJavaHome(): String {
+        System.getenv("JAVA_HOME")?.let { return it }
+
+        val javaHome = System.getProperty("java.home")
+        val javaHomeFile = File(javaHome)
+        return if (javaHomeFile.name == "jre" && javaHomeFile.parentFile?.resolve("bin/javac")?.exists() == true) {
+            javaHomeFile.parentFile.absolutePath
+        } else {
+            javaHome
         }
     }
 
@@ -359,6 +498,8 @@ class SplashPageViewModel : ViewModel() {
         selectedGradleDsl.value = GradleDsl.KOTLIN
         buildToolInstallationPath.value = ""
         selectedDistribution.value = gradleDistributions.value.first()
+        selectedMavenDistribution.value = mavenDistributions.value.first()
+        selectedMavenPackaging.value = "jar"
         groupId.value = "com.example"
         artifactId.value = ""
     }
