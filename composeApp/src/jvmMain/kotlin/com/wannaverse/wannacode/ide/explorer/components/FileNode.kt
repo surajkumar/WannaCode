@@ -5,7 +5,6 @@ import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.TooltipPlacement
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +15,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,16 +25,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wannaverse.wannacode.common.FileContextMenu
+import com.wannaverse.wannacode.common.InlineEditableText
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import com.wannaverse.wannacode.theme.WannaCodeTheme
 import java.io.File
@@ -47,6 +47,34 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
     val colors = WannaCodeTheme.colors
     var clickOffset by remember { mutableStateOf(DpOffset.Zero) }
     val density = androidx.compose.ui.platform.LocalDensity.current
+
+    var isRenaming by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete File", color = colors.textPrimary) },
+            text = {
+                Text(
+                    "Are you sure you want to delete \"${file.name}\"?",
+                    color = colors.textSecondary
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.deleteFile(file)
+                    showDeleteDialog = false
+                }) { Text("Delete", color = colors.error) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel", color = colors.textSecondary)
+                }
+            },
+            containerColor = colors.menuBackground
+        )
+    }
 
     TooltipArea(
         tooltip = {
@@ -119,14 +147,28 @@ fun FileNode(file: File, indent: Int = 0, viewModel: CodeEditorViewModel, contex
 
             Spacer(Modifier.width(6.dp))
 
-            Text(
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            InlineEditableText(
                 text = file.name,
-                color = colors.explorerText
+                isEditing = isRenaming,
+                onEditComplete = { newName ->
+                    if (newName != file.name) {
+                        viewModel.renameFile(file, newName)
+                    }
+                    isRenaming = false
+                },
+                onEditCancel = { isRenaming = false }
             )
 
-            FileContextMenu(file, contextMenuFile, clickOffset) { onContextMenuFileChanged(null) }
+            FileContextMenu(
+                file = file,
+                contextMenuFile = contextMenuFile,
+                offset = clickOffset,
+                onDismiss = { onContextMenuFileChanged(null) },
+                onRename = { isRenaming = true },
+                onCut = { viewModel.cutFile(file) },
+                onCopy = { viewModel.copyFile(file) },
+                onDelete = { showDeleteDialog = true }
+            )
         }
     }
 }

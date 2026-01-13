@@ -25,6 +25,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import com.wannaverse.wannacode.common.PasteConflictDialog
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import com.wannaverse.wannacode.ide.explorer.components.FileTreeView
 import com.wannaverse.wannacode.theme.WannaCodeTheme
@@ -36,6 +37,17 @@ fun FileExplorer(directory: File, viewModel: CodeEditorViewModel) {
     val colors = WannaCodeTheme.colors
     var sidebarWidth by remember { mutableStateOf(350.dp) }
     val scrollState = rememberScrollState()
+    val currentDirectory by viewModel.directory
+    val pasteConflict = viewModel.pendingPasteConflict
+
+    if (pasteConflict != null) {
+        PasteConflictDialog(
+            fileName = pasteConflict.source.name,
+            onReplace = { viewModel.resolveConflictReplace() },
+            onKeepBoth = { viewModel.resolveConflictKeepBoth() },
+            onSkip = { viewModel.resolveConflictSkip() }
+        )
+    }
 
     Box(Modifier.width(sidebarWidth).padding(start = 20.dp, top = 10.dp).background(colors.explorerBackground)) {
         Row {
@@ -45,7 +57,7 @@ fun FileExplorer(directory: File, viewModel: CodeEditorViewModel) {
                     .verticalScroll(scrollState)
                     .padding(end = 8.dp)
             ) {
-                FileTreeView(directory, viewModel = viewModel, refreshKey = viewModel.refreshKey)
+                FileTreeView(currentDirectory, viewModel = viewModel, refreshKey = viewModel.refreshKey)
             }
 
             VerticalScrollbar(

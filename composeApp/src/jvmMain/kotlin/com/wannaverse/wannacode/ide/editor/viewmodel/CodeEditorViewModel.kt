@@ -350,4 +350,229 @@ class CodeEditorViewModel : ViewModel() {
             }
         }
     }
+
+    private var clipboardFile: File? = null
+    private var clipboardOperation: ClipboardOperation? = null
+
+    enum class ClipboardOperation { CUT, COPY }
+
+    data class PasteConflict(
+        val source: File,
+        val destination: File,
+        val targetDirectory: File,
+        val operation: ClipboardOperation
+    )
+
+    var pendingPasteConflict by mutableStateOf<PasteConflict?>(null)
+        private set
+
+    fun cutFile(file: File) {
+        clipboardFile = file
+        clipboardOperation = ClipboardOperation.CUT
+    }
+
+    fun copyFile(file: File) {
+        clipboardFile = file
+        clipboardOperation = ClipboardOperation.COPY
+    }
+
+    fun pasteFile(targetDirectory: File): Boolean {
+        val source = clipboardFile ?: return false
+        val operation = clipboardOperation ?: return false
+        val destination = File(targetDirectory, source.name)
+
+        if (destination.exists()) {
+            pendingPasteConflict = PasteConflict(source, destination, targetDirectory, operation)
+            return false
+        }
+
+        executePaste(source, destination, operation)
+        return true
+    }
+
+    fun resolveConflictReplace() {
+        val conflict = pendingPasteConflict ?: return
+        pendingPasteConflict = null
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (conflict.destination.isDirectory) {
+                    conflict.destination.deleteRecursively()
+                } else {
+                    conflict.destination.delete()
+                }
+
+                withContext(Dispatchers.Main) {
+                    executePaste(conflict.source, conflict.destination, conflict.operation)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun resolveConflictKeepBoth() {
+        val conflict = pendingPasteConflict ?: return
+        pendingPasteConflict = null
+
+        val newName = generateUniqueName(conflict.source.name, conflict.targetDirectory)
+        val newDestination = File(conflict.targetDirectory, newName)
+        executePaste(conflict.source, newDestination, conflict.operation)
+    }
+
+    fun resolveConflictSkip() {
+        pendingPasteConflict = null
+    }
+
+    private fun generateUniqueName(originalName: String, targetDirectory: File): String {
+        val dotIndex = originalName.lastIndexOf('.')
+        val baseName = if (dotIndex > 0) originalName.substring(0, dotIndex) else originalName
+        val extension = if (dotIndex > 0) originalName.substring(dotIndex) else ""
+
+        var counter = 1
+        var newName: String
+        do {
+            newName = "$baseName ($counter)$extension"
+            counter++
+        } while (File(targetDirectory, newName).exists())
+
+        return newName
+    }
+
+    private fun executePaste(source: File, destination: File, operation: ClipboardOperation) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (source.isDirectory) {
+                    source.copyRecursively(destination)
+                    if (operation == ClipboardOperation.CUT) {
+                        source.deleteRecursively()
+                    }
+                } else {
+                    source.copyTo(destination)
+                    if (operation == ClipboardOperation.CUT) {
+                        source.delete()
+                    }
+                }
+
+                if (operation == ClipboardOperation.CUT) {
+                    clipboardFile = null
+                    clipboardOperation = null
+                }
+
+                withContext(Dispatchers.Main) {
+                    refreshTree()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun createNewFile(parentDirectory: File, fileName: String): Boolean {
+        if (fileName.isBlank()) return false
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val newFile = File(parentDirectory, fileName)
+                if (newFile.exists()) {
+                    return@launch
+                }
+                newFile.createNewFile()
+
+                withContext(Dispatchers.Main) {
+                    refreshTree()
+                    openFile(newFile)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        return true
+    }
+
+    fun createNewFolder(parentDirectory: File, folderName: String): Boolean {
+        if (folderName.isBlank()) return false
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val newFolder = File(parentDirectory, folderName)
+                if (newFolder.exists()) {
+                    return@launch
+                }
+                newFolder.mkdir()
+
+                withContext(Dispatchers.Main) {
+                    refreshTree()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        return true
+    }
+
+    fun renameFile(file: File, newName: String): Boolean {
+        if (newName.isBlank()) return false
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val newFile = File(file.parentFile, newName)
+                if (newFile.exists()) {
+                    return@launch
+                }
+
+                val success = file.renameTo(newFile)
+                if (success) {
+                    withContext(Dispatchers.Main) {
+                        // Update root directory if it was renamed
+                        if (file == directory.value) {
+                            directory.value = newFile
+                            projectName.value = newFile.name
+                        }
+
+                        // Update any open tabs with this file
+                        val tab = _tabContents.values.find { it.file == file }
+                        if (tab != null) {
+                            activeTabTitles.remove(tab.file.name)
+                            activeTabTitles.add(newFile.name)
+                            _tabContents[tab.id] = tab.copy(file = newFile)
+                        }
+                        refreshTree()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        return true
+    }
+
+    fun deleteFile(file: File): Boolean {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // Close any open tabs for this file
+                withContext(Dispatchers.Main) {
+                    val tab = _tabContents.values.find { it.file == file }
+                    if (tab != null) {
+                        closeTab(tab.id)
+                    }
+                }
+
+                if (file.isDirectory) {
+                    file.deleteRecursively()
+                } else {
+                    file.delete()
+                }
+
+                withContext(Dispatchers.Main) {
+                    refreshTree()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        return true
+    }
+
+    fun hasClipboard(): Boolean = clipboardFile != null
 }

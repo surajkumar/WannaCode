@@ -19,7 +19,15 @@ fun DirectoryContextMenu(
     file: File,
     contextMenuFile: File?,
     offset: DpOffset = DpOffset.Zero,
-    onDismiss: () -> Unit
+    showPaste: Boolean = false,
+    onDismiss: () -> Unit,
+    onNewFile: () -> Unit = {},
+    onNewFolder: () -> Unit = {},
+    onRename: () -> Unit = {},
+    onCut: () -> Unit = {},
+    onCopy: () -> Unit = {},
+    onPaste: () -> Unit = {},
+    onDelete: () -> Unit = {}
 ) {
     val colors = WannaCodeTheme.colors
 
@@ -31,20 +39,57 @@ fun DirectoryContextMenu(
             .background(colors.menuBackground, shape = RoundedCornerShape(5.dp))
             .border(1.dp, colors.menuBorder, RoundedCornerShape(5.dp))
     ) {
-        listOf("New File", "Rename", "Cut", "Copy", "Delete...").forEach { option ->
+        DropdownMenuItem(
+            onClick = {
+                onNewFile()
+                onDismiss()
+            },
+            text = { Text(text = "New File", color = colors.menuText, fontSize = 14.sp) }
+        )
+        DropdownMenuItem(
+            onClick = {
+                onNewFolder()
+                onDismiss()
+            },
+            text = { Text(text = "New Folder", color = colors.menuText, fontSize = 14.sp) }
+        )
+        DropdownMenuItem(
+            onClick = {
+                onRename()
+                onDismiss()
+            },
+            text = { Text(text = "Rename", color = colors.menuText, fontSize = 14.sp) }
+        )
+        DropdownMenuItem(
+            onClick = {
+                onCut()
+                onDismiss()
+            },
+            text = { Text(text = "Cut", color = colors.menuText, fontSize = 14.sp) }
+        )
+        DropdownMenuItem(
+            onClick = {
+                onCopy()
+                onDismiss()
+            },
+            text = { Text(text = "Copy", color = colors.menuText, fontSize = 14.sp) }
+        )
+        if (showPaste) {
             DropdownMenuItem(
                 onClick = {
+                    onPaste()
                     onDismiss()
                 },
-                text = {
-                    Text(
-                        text = option,
-                        color = colors.menuText,
-                        fontSize = 14.sp
-                    )
-                }
+                text = { Text(text = "Paste", color = colors.menuText, fontSize = 14.sp) }
             )
         }
+        DropdownMenuItem(
+            onClick = {
+                onDelete()
+                onDismiss()
+            },
+            text = { Text(text = "Delete", color = colors.error, fontSize = 14.sp) }
+        )
     }
 }
 
@@ -53,7 +98,11 @@ fun FileContextMenu(
     file: File,
     contextMenuFile: File?,
     offset: DpOffset = DpOffset.Zero,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onRename: () -> Unit = {},
+    onCut: () -> Unit = {},
+    onCopy: () -> Unit = {},
+    onDelete: () -> Unit = {}
 ) {
     val colors = WannaCodeTheme.colors
 
@@ -65,19 +114,33 @@ fun FileContextMenu(
             .background(colors.menuBackground, shape = RoundedCornerShape(5.dp))
             .border(1.dp, colors.menuBorder, RoundedCornerShape(5.dp))
     ) {
-        listOf("Rename", "Cut", "Copy", "Delete...").forEach { option ->
-            DropdownMenuItem(
-                onClick = {
-                    onDismiss()
-                },
-                text = {
-                    Text(
-                        text = option,
-                        color = colors.menuText,
-                        fontSize = 14.sp
-                    )
-                }
-            )
-        }
+        DropdownMenuItem(
+            onClick = {
+                onRename()
+                onDismiss()
+            },
+            text = { Text(text = "Rename", color = colors.menuText, fontSize = 14.sp) }
+        )
+        DropdownMenuItem(
+            onClick = {
+                onCut()
+                onDismiss()
+            },
+            text = { Text(text = "Cut", color = colors.menuText, fontSize = 14.sp) }
+        )
+        DropdownMenuItem(
+            onClick = {
+                onCopy()
+                onDismiss()
+            },
+            text = { Text(text = "Copy", color = colors.menuText, fontSize = 14.sp) }
+        )
+        DropdownMenuItem(
+            onClick = {
+                onDelete()
+                onDismiss()
+            },
+            text = { Text(text = "Delete", color = colors.error, fontSize = 14.sp) }
+        )
     }
 }
