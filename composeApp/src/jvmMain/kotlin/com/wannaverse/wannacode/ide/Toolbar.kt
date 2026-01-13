@@ -13,13 +13,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wannaverse.wannacode.STROKE_COLOR
 import com.wannaverse.wannacode.common.Dropdown
 import com.wannaverse.wannacode.common.PlainDropdown
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
+import com.wannaverse.wannacode.windowMovement
 import org.jetbrains.compose.resources.painterResource
 import wannacode.composeapp.generated.resources.Res
 import wannacode.composeapp.generated.resources.close_cross
@@ -27,7 +30,7 @@ import wannacode.composeapp.generated.resources.minimize
 import wannacode.composeapp.generated.resources.play
 
 @Composable
-fun Toolbar(viewModel: CodeEditorViewModel) {
+fun Toolbar(viewModel: CodeEditorViewModel, window: ComposeWindow? = null) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -36,6 +39,13 @@ fun Toolbar(viewModel: CodeEditorViewModel) {
                 start = 20.dp,
                 end = 20.dp,
                 top = 20.dp
+            )
+            .then(
+                if (window != null) {
+                    Modifier.pointerInput(Unit) {
+                        windowMovement(window)
+                    }
+                } else Modifier
             )
     ) {
         Row {

@@ -107,6 +107,8 @@ fun main() = application {
                 undecorated = true,
                 state = windowState
             ) {
+                val window = this.window
+
                 Scaffold(
                     containerColor = MaterialTheme.colorScheme.background
                 ) {
@@ -114,7 +116,10 @@ fun main() = application {
                         launchJdtServer(viewModel.getDir())
                     }.start()
 
-                    IDEScreen(viewModel.getDir())
+                    IDEScreen(
+                        directory = viewModel.getDir(),
+                        window = window
+                    )
                 }
             }
         }
