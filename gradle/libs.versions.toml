@@ -8,6 +8,7 @@ kotlinx-coroutines = "1.10.2"
 json = "20210307"
 
 eclipse-jdt = "0.21.1"
+pty4j = "0.12.13"
 
 # Plugins
 spotless = "8.0.0"
@@ -24,6 +25,8 @@ json = { module = "org.json:json", version.ref = "json"}
 
 eclipse-lsp4j = { module = "org.eclipse.lsp4j:org.eclipse.lsp4j", version.ref = "eclipse-jdt"}
 eclipse-lsp4j-jsonrpc = { module = "org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc", version.ref = "eclipse-jdt"}
+
+pty4j = { module = "org.jetbrains.pty4j:pty4j", version.ref = "pty4j" }
 
 [plugins]
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
