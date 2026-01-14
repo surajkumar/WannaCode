@@ -95,7 +95,11 @@ class TerminalViewModel : ViewModel() {
         return id
     }
 
-    private fun startPtyProcess(sessionId: Int, workDir: File) {
+    private fun startPtyProcess(
+        sessionId: Int,
+        workDir: File,
+        extraEnv: Map<String, String> = emptyMap()
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val cols = _terminalCols[sessionId] ?: 120
@@ -104,6 +108,7 @@ class TerminalViewModel : ViewModel() {
                 val env = System.getenv().toMutableMap()
                 env["TERM"] = "xterm-256color"
                 env["COLORTERM"] = "truecolor"
+                env.putAll(extraEnv)
 
                 val shell = if (System.getProperty("os.name").lowercase().contains("win")) {
                     arrayOf("cmd.exe")
@@ -706,15 +711,36 @@ class TerminalViewModel : ViewModel() {
         return Pair(_cursorRow[sessionId] ?: 0, _cursorCol[sessionId] ?: 0)
     }
 
-    fun runCommandInNewSession(command: String, name: String = "Run"): Int {
-        val sessionId = createSession(name)
-        // Give the shell a moment to start, then send the command
+    fun runCommandInNewSession(
+        command: String,
+        name: String = "Run",
+        environmentVariables: Map<String, String> = emptyMap(),
+        customWorkingDir: File? = null
+    ): Int {
+        val id = nextId++
+        val dir = customWorkingDir ?: workingDirectory ?: File(System.getProperty("user.home"))
+        val session = TerminalSession(id, name, dir)
+        _sessions[id] = session
+        sessionLinesMap[id] = mutableStateListOf()
+
+        _cursorRow[id] = 0
+        _cursorCol[id] = 0
+        _terminalCols[id] = 120
+        _terminalRows[id] = 24
+        _currentFg[id] = Color.White
+        _currentBg[id] = Color.Transparent
+        _currentBold[id] = false
+
+        currentSessionId = id
+
+        startPtyProcess(id, dir, environmentVariables)
+
         viewModelScope.launch {
             kotlinx.coroutines.delay(200)
-            sendInput(sessionId, command + "\n")
+            sendInput(id, command + "\n")
         }
-        currentSessionId = sessionId
-        return sessionId
+
+        return id
     }
 
     override fun onCleared() {

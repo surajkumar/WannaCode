@@ -13,6 +13,7 @@ import com.wannaverse.wannacode.ide.editor.CodeEditor
 import com.wannaverse.wannacode.ide.editor.CodeEditorTabs
 import com.wannaverse.wannacode.ide.editor.viewmodel.CodeEditorViewModel
 import com.wannaverse.wannacode.ide.explorer.FileExplorer
+import com.wannaverse.wannacode.ide.runconfig.RunConfigurationViewModel
 import com.wannaverse.wannacode.ide.terminal.Terminal
 import com.wannaverse.wannacode.ide.terminal.TerminalViewModel
 import com.wannaverse.wannacode.theme.WannaCodeTheme
@@ -23,6 +24,7 @@ fun IDEScreen(
     directory: File,
     viewModel: CodeEditorViewModel = viewModel { CodeEditorViewModel() },
     terminalViewModel: TerminalViewModel = viewModel { TerminalViewModel() },
+    runConfigViewModel: RunConfigurationViewModel = viewModel { RunConfigurationViewModel() },
     window: ComposeWindow? = null
 ) {
     val colors = WannaCodeTheme.colors
@@ -36,7 +38,7 @@ fun IDEScreen(
     Column(
         modifier = Modifier.fillMaxSize().background(colors.background)
     ) {
-        Toolbar(viewModel, terminalViewModel, window)
+        Toolbar(viewModel, terminalViewModel, runConfigViewModel, window)
 
         Row(modifier = Modifier.weight(1f)) {
             FileExplorer(directory, viewModel)
